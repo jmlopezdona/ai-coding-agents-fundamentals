@@ -1,4 +1,4 @@
-# 4. Skills: conocimiento bajo demanda
+# 5. Skills: conocimiento bajo demanda
 
 Las skills son paquetes de instrucciones y recursos que el agente carga **solo cuando son relevantes**. Resuelven un problema que `AGENTS.md` no puede: cómo dar al agente conocimiento profundo de dominio sin inflar su contexto en cada turno.
 

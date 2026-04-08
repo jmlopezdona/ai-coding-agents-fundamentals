@@ -1,4 +1,4 @@
-# 9. Memoria y persistencia entre sesiones
+# 10. Memoria y persistencia entre sesiones
 
 Los agentes tienen varias formas de "recordar" cosas: la conversación en vivo, ficheros de memoria persistente, planes, listas de tareas y el propio repositorio. Cada una tiene una vida útil distinta, un público distinto y un modo de fallo distinto. Tratarlas como intercambiables es uno de los errores más comunes al empezar, y una de las mayores fuentes de pérdida silenciosa de calidad cuando un equipo escala.
 

@@ -8,22 +8,23 @@ Technical teams that are *just starting* to operate AI coding agents (Claude Cod
 
 ## How to read it
 
-The 12 chapters build progressively. If you're brand new, read in order. If you already have some experience, jump to the chapter that matches your current question.
+The 13 chapters build progressively. If you're brand new, read in order. If you already have some experience, jump to the chapter that matches your current question.
 
 ## Chapters
 
 - [0. What an AI coding agent really is](00-what-is-an-agent.md)
 - [1. Context, tools, loop — the mental model](01-context-tools-loop.md)
 - [2. Your first AGENTS.md](02-first-agents-md.md)
-- [3. Slash commands and reusable prompts](03-slash-commands.md)
-- [4. Skills: knowledge on demand](04-skills.md)
-- [5. Subagents and delegation](05-subagents.md)
-- [6. Hooks and automation](06-hooks.md)
-- [7. MCP and external tools](07-mcp.md)
-- [8. Permissions, sandbox, execution modes](08-permissions-sandbox.md)
-- [9. Memory and persistence across sessions](09-memory-persistence.md)
-- [10. Anti-patterns of the first months](10-anti-patterns.md)
-- [11. Signs you need a harness](11-signs-you-need-a-harness.md)
+- [3. Rules and instructions: same problem, different formats](03-rules-instructions.md)
+- [4. Slash commands and reusable prompts](04-slash-commands.md)
+- [5. Skills: knowledge on demand](05-skills.md)
+- [6. Subagents and delegation](06-subagents.md)
+- [7. Hooks and automation](07-hooks.md)
+- [8. MCP and external tools](08-mcp.md)
+- [9. Permissions, sandbox, execution modes](09-permissions-sandbox.md)
+- [10. Memory and persistence across sessions](10-memory-persistence.md)
+- [11. Anti-patterns of the first months](11-anti-patterns.md)
+- [12. Signs you need a harness](12-signs-you-need-a-harness.md)
 
 ## What's next
 

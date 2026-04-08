@@ -1,4 +1,4 @@
-# 3. Slash commands y prompts reutilizables
+# 4. Slash commands y prompts reutilizables
 
 Cuando te encuentres tecleando el mismo prompt por quinta vez, es momento de cristalizarlo como un slash command (`/commit`, `/review-pr`, `/test`). Los comandos son cómo conviertes prompts puntuales en convenciones de equipo — un vocabulario compartido en el que todos, incluido el agente, están de acuerdo.
 

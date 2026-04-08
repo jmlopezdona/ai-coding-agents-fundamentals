@@ -1,4 +1,4 @@
-# 6. Hooks y automatización
+# 7. Hooks y automatización
 
 Los hooks son comandos que el harness ejecuta automáticamente ante eventos (antes de una tool call, después de una edición, antes de un commit). Son cómo impones cosas en las que no deberías confiar a la memoria del agente — formato, lint, escaneo de secretos, ejecución de tests.
 

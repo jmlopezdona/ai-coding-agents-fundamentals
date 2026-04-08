@@ -1,4 +1,4 @@
-# 8. Permissions, sandbox, and execution modes
+# 9. Permissions, sandbox, and execution modes
 
 Every agent product has knobs for "how much can it do without asking?" Get this wrong in either direction and you'll suffer: too restrictive and the agent is useless, too permissive and you'll regret it the first time it runs `rm -rf` or pushes to `main`.
 
@@ -59,7 +59,7 @@ If you're setting up an agent for a team that has never used one:
 4. Allowlist safe `Bash` commands: your test runner, linter, formatter, `git status`, `git diff`, `git log`.
 5. Require confirmation for any `git push`, any `rm`, any package install, any network fetch.
 6. Run inside a git worktree so "undo" is `git worktree remove`.
-7. Enable the day-one hooks from chapter 6 so formatting and secret scanning happen automatically.
+7. Enable the day-one hooks from chapter 7 so formatting and secret scanning happen automatically.
 
 After two weeks of real use, you'll know which prompts you always approve — promote those to the allowlist. You'll also know which tools the agent keeps misusing — tighten those.
 

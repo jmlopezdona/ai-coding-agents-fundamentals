@@ -1,4 +1,4 @@
-# 6. Hooks and automation
+# 7. Hooks and automation
 
 Hooks are commands the harness runs automatically on events (before a tool call, after an edit, before a commit). They're how you enforce things the agent shouldn't be trusted to remember — formatting, linting, secret scanning, test runs.
 

@@ -1,4 +1,4 @@
-# 8. Permisos, sandbox y modos de ejecución
+# 9. Permisos, sandbox y modos de ejecución
 
 Todo producto de agentes tiene mandos para "¿cuánto puede hacer sin preguntar?" Equivócate en cualquiera de las dos direcciones y lo sufrirás: demasiado restrictivo y el agente es inútil, demasiado permisivo y te arrepentirás la primera vez que ejecute `rm -rf` o haga push a `main`.
 
@@ -59,7 +59,7 @@ Si estás montando un agente para un equipo que nunca ha usado uno:
 4. Allowlist de comandos `Bash` seguros: tu test runner, linter, formateador, `git status`, `git diff`, `git log`.
 5. Exige confirmación para cualquier `git push`, cualquier `rm`, cualquier instalación de paquetes, cualquier fetch de red.
 6. Corre dentro de un git worktree para que "deshacer" sea `git worktree remove`.
-7. Habilita los hooks del primer día del capítulo 6 para que formato y escaneo de secretos pasen automáticamente.
+7. Habilita los hooks del primer día del capítulo 7 para que formato y escaneo de secretos pasen automáticamente.
 
 Tras dos semanas de uso real, sabrás qué prompts apruebas siempre — promuévelos a la allowlist. También sabrás qué herramientas sigue usando mal el agente — aprétalas.
 

@@ -1,4 +1,4 @@
-# 7. MCP y herramientas externas
+# 8. MCP y herramientas externas
 
 MCP (Model Context Protocol) es una forma estándar de enchufar herramientas y fuentes de datos externas a un agente: una base de datos, un sistema de tickets, un sitio de docs, una API interna a medida. Este capítulo lo explica sin jerga y te ayuda a decidir cuándo MCP merece la pena vs un script normal.
 

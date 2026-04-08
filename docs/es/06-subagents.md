@@ -1,4 +1,4 @@
-# 5. Subagentes y delegación
+# 6. Subagentes y delegación
 
 Un subagente es un agente nuevo que el agente principal lanza para tratar una sub-tarea de forma aislada. Hay dos razones para usarlos: **paralelización** (búsquedas independientes a la vez) y **protección del contexto** (mantener el hilo principal limpio de salidas grandes y ruidosas).
 

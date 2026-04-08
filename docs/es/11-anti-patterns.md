@@ -1,4 +1,4 @@
-# 10. Anti-patrones de los primeros meses
+# 11. Anti-patrones de los primeros meses
 
 Los mismos errores aparecen en casi todos los equipos en sus primeros meses con agentes de código. Ninguno es catastrófico por sí solo — no vas a perder un fin de semana por ninguno en particular. Pero juntos son la diferencia entre un equipo que en silencio entrega 2x más y un equipo que, seis meses después, decide "esto de la IA no nos funciona."
 
@@ -62,7 +62,7 @@ Cada patrón sigue la misma estructura: **síntoma**, **por qué duele**, **arre
 
 **Síntoma.** El fichero de memoria sigue creciendo. Cada incidente añade una línea. Nunca se borra nada.
 
-**Por qué duele.** Ver capítulo 9. Un log no es memoria. Las notas viejas empujan fuera a las útiles, y ya nadie se fía del fichero.
+**Por qué duele.** Ver capítulo 10. Un log no es memoria. Las notas viejas empujan fuera a las útiles, y ya nadie se fía del fichero.
 
 **Arreglo.** Poda agresivamente. Si una línea no ha importado este mes, bórrala. Mantén solo hechos no obvios sobre el usuario y el proyecto.
 

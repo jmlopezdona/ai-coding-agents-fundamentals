@@ -1,4 +1,4 @@
-# 4. Skills: knowledge on demand
+# 5. Skills: knowledge on demand
 
 Skills are bundles of instructions and resources that the agent loads **only when relevant**. They solve a problem `AGENTS.md` can't: how to give the agent deep domain knowledge without bloating its context on every turn.
 

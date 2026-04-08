@@ -49,19 +49,20 @@ nav:
       - "1. Context, tools, loop": 01-context-tools-loop.md
       - "2. Your first AGENTS.md": 02-first-agents-md.md
   - Building blocks:
-      - "3. Slash commands and reusable prompts": 03-slash-commands.md
-      - "4. Skills: knowledge on demand": 04-skills.md
-      - "5. Subagents and delegation": 05-subagents.md
+      - "3. Rules and instructions": 03-rules-instructions.md
+      - "4. Slash commands and reusable prompts": 04-slash-commands.md
+      - "5. Skills: knowledge on demand": 05-skills.md
+      - "6. Subagents and delegation": 06-subagents.md
   - Automation and integration:
-      - "6. Hooks and automation": 06-hooks.md
-      - "7. MCP and external tools": 07-mcp.md
+      - "7. Hooks and automation": 07-hooks.md
+      - "8. MCP and external tools": 08-mcp.md
   - Operating safely:
-      - "8. Permissions, sandbox, execution modes": 08-permissions-sandbox.md
-      - "9. Memory and persistence across sessions": 09-memory-persistence.md
+      - "9. Permissions, sandbox, execution modes": 09-permissions-sandbox.md
+      - "10. Memory and persistence across sessions": 10-memory-persistence.md
   - Pitfalls:
-      - "10. Anti-patterns of the first months": 10-anti-patterns.md
+      - "11. Anti-patterns of the first months": 11-anti-patterns.md
   - What's next:
-      - "11. Signs you need a harness": 11-signs-you-need-a-harness.md
+      - "12. Signs you need a harness": 12-signs-you-need-a-harness.md
 
 markdown_extensions:
   - admonition
@@ -116,19 +117,20 @@ plugins:
             "1. Context, tools, loop": "1. Contexto, herramientas, bucle"
             "2. Your first AGENTS.md": "2. Tu primer AGENTS.md"
             "Building blocks": "Bloques de construcción"
-            "3. Slash commands and reusable prompts": "3. Slash commands y prompts reutilizables"
-            "4. Skills: knowledge on demand": "4. Skills: conocimiento bajo demanda"
-            "5. Subagents and delegation": "5. Subagentes y delegación"
+            "3. Rules and instructions": "3. Rules e instructions"
+            "4. Slash commands and reusable prompts": "4. Slash commands y prompts reutilizables"
+            "5. Skills: knowledge on demand": "5. Skills: conocimiento bajo demanda"
+            "6. Subagents and delegation": "6. Subagentes y delegación"
             "Automation and integration": "Automatización e integración"
-            "6. Hooks and automation": "6. Hooks y automatización"
-            "7. MCP and external tools": "7. MCP y herramientas externas"
+            "7. Hooks and automation": "7. Hooks y automatización"
+            "8. MCP and external tools": "8. MCP y herramientas externas"
             "Operating safely": "Operar con seguridad"
-            "8. Permissions, sandbox, execution modes": "8. Permisos, sandbox y modos de ejecución"
-            "9. Memory and persistence across sessions": "9. Memoria y persistencia entre sesiones"
+            "9. Permissions, sandbox, execution modes": "9. Permisos, sandbox y modos de ejecución"
+            "10. Memory and persistence across sessions": "10. Memoria y persistencia entre sesiones"
             "Pitfalls": "Errores comunes"
-            "10. Anti-patterns of the first months": "10. Anti-patrones de los primeros meses"
+            "11. Anti-patterns of the first months": "11. Anti-patrones de los primeros meses"
             "What's next": "Qué sigue"
-            "11. Signs you need a harness": "11. Señales de que necesitas un harness"
+            "12. Signs you need a harness": "12. Señales de que necesitas un harness"
 
 extra:
   social:
