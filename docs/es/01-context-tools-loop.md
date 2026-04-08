@@ -90,6 +90,15 @@ Algunos ejemplos concretos:
 
 La ingeniería de prompts es la *última* palanca, no la primera. Arreglar el contexto (apuntarle a los ficheros correctos, recortar ruido, añadir una línea al `AGENTS.md`) y arreglar las herramientas (darle acceso a shell, darle un test runner real) resuelve la inmensa mayoría del mal comportamiento de un agente.
 
+## Cerrar el bucle: verificación antes de devolver el control
+
+El bucle del pseudocódigo de arriba termina cuando el modelo decide dejar de llamar a herramientas. Pero "el modelo paró" no es lo mismo que "la tarea está hecha". Un bucle solo está realmente cerrado cuando el agente ha *verificado su propio trabajo* contra una comprobación que ambos entendéis — los tests pasan, el lint está limpio, el typechecker calla, el dev server devuelve la respuesta esperada, la captura coincide.
+
+Esto tiene una consecuencia sobre cómo escribes prompts. Antes de delegar nada, pregúntate: *"¿cómo voy a saber que esto está hecho?"* Si no puedes contestar, el agente tampoco puede, y vas a pasar la revisión actuando como test runner humano. Si puedes contestar, mete la respuesta en el prompt — y asegúrate de que el agente tiene las herramientas (una shell real, un comando de tests, un linter, un typechecker) para correr esa comprobación él mismo e iterar hasta que pase. La métrica que importa no es "¿produjo el agente un diff?" sino "¿qué porcentaje de tareas del agente pasan mi primera revisión sin un viaje de ida y vuelta?". La auto-verificación es lo que mueve ese número.
+
+!!! tip "Define tu criterio de aceptación antes de escribir el prompt"
+    Si no sabes decir cómo verificarías el éxito, el agente tampoco. Decide primero la comprobación, expón la herramienta que la corre, y exige al agente que la ejecute antes de devolverte el control.
+
 ## Idea clave
 
 !!! tip "Idea clave"

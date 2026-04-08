@@ -90,6 +90,15 @@ A few concrete examples:
 
 Prompt engineering is the *last* lever, not the first. Fixing context (point it at the right files, trim noise, add an `AGENTS.md` line) and fixing tools (give it shell access, give it a real test runner) solves the vast majority of agent misbehavior.
 
+## Closing the loop: verification before handing back
+
+The loop in the pseudocode above terminates when the model decides to stop calling tools. But "the model stopped" is not the same as "the task is done". A loop is only really closed when the agent has *verified its own work* against a check that you both understand — tests pass, lint is clean, the typechecker is silent, the dev server returns the expected response, the screenshot matches.
+
+This has a consequence for how you write prompts. Before you delegate anything, ask yourself: *"how will I know this is done?"* If you can't answer, the agent can't either, and you'll spend the review acting as a human test runner. If you can answer, put the answer in the prompt — and make sure the agent has the tools (a real shell, a test command, a linter, a typechecker) to run that check itself and iterate until it passes. The metric that matters is not "did the agent produce a diff" but "what percentage of agent tasks pass my first review without a round-trip". Self-verification is what moves that number.
+
+!!! tip "Define your acceptance check before you write the prompt"
+    If you can't say how you'd verify success, the agent can't either. Decide the check first, expose the tool that runs it, and require the agent to run it before handing control back.
+
 ## Key takeaway
 
 !!! tip "Key takeaway"

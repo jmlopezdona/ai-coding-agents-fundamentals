@@ -35,6 +35,8 @@ Mete cosas que el agente **no pueda inferir del propio código** y que **cambien
 - **Cosas que evitar**: "no edites ficheros bajo `vendor/`", "no actualices dependencias sin preguntar", "no añadas dependencias top-level nuevas".
 - **Rarezas locales**: "los tests de integración necesitan Docker corriendo", "node_modules está en la raíz del repo, no por paquete".
 
+`AGENTS.md` también debe declarar *cómo verificar los cambios*: los comandos exactos para tests, lint, typecheck y build, más la regla de que el agente los corra antes de devolver el control. Esto no es decoración — es lo que cierra el bucle del agente. Sin comandos de verificación explícitos el agente no tiene contra qué contrastar su propio trabajo, y cada tarea acaba rebotando a ti para validación manual. Un solo bloque listando `pytest`, `ruff check` y `mypy` (o el equivalente en tu stack) es la diferencia entre "el agente dice que está hecho y lo está" y "el agente dice que está hecho y te enteras de lo contrario en la revisión".
+
 ## Qué dejar fuera
 
 - Análisis arquitectónicos profundos. El agente leerá el código si lo necesita.

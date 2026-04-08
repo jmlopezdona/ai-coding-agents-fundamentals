@@ -74,5 +74,13 @@ Each pattern below follows the same structure: **symptom**, **why it hurts**, **
 
 **Fix.** Treat all tool output as untrusted data, not instructions. Sandbox network access. Never give the agent credentials it doesn't strictly need. Review any action that was triggered by fetched content.
 
+## 9. Delegating without a verification loop
+
+**Symptom.** A developer hands the agent a task with no test command, no lint command, no acceptance criteria — just "add the X feature" or "fix the Y bug". The agent returns a diff that *reads* correct, the developer skims it, merges it, and is then surprised when CI turns red or QA finds that the new code doesn't actually do what was asked.
+
+**Why it hurts.** The agent has no signal to self-correct. With nothing to run, it can't tell whether its own change works; it just stops when the prose feels finished. Every task collapses into a human-in-the-loop debug session: you become the test runner, the linter, and the typechecker rolled into one. Throughput craters, and trust in the agent erodes for reasons that have nothing to do with the model's actual ability — you simply never gave it a way to check itself.
+
+**Fix.** Define the acceptance check *before* you write the prompt: which tests must pass, which command must exit zero, which endpoint must return what. Expose those checks as tools the agent can actually run (test runner, linter, typechecker, dev server) and require the agent to run them and report the results before handing back. Closing the loop is the agent's job, not yours — your job is to make sure the loop *can* be closed.
+
 !!! success "Key takeaway"
     None of these are clever traps. They are all "the obvious lazy choice" in the moment. Simply knowing they are anti-patterns — and naming them out loud in code review — is most of the cure.

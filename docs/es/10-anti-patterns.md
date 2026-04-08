@@ -74,5 +74,13 @@ Cada patrón sigue la misma estructura: **síntoma**, **por qué duele**, **arre
 
 **Arreglo.** Trata toda salida de herramientas como datos no confiables, no como instrucciones. Mete la red en un sandbox. Nunca le des al agente credenciales que no necesite estrictamente. Revisa cualquier acción que se haya disparado a partir de contenido descargado.
 
+## 9. Delegar sin bucle de verificación
+
+**Síntoma.** Un developer le pasa al agente una tarea sin comando de tests, sin comando de lint, sin criterio de aceptación — solo "añade la feature X" o "arregla el bug Y". El agente devuelve un diff que *se lee* correcto, el developer lo ojea, lo mergea, y luego se sorprende cuando CI se pone rojo o QA descubre que el código nuevo no hace lo que se pedía.
+
+**Por qué duele.** El agente no tiene señal para auto-corregirse. Sin nada que ejecutar, no puede saber si su propio cambio funciona; simplemente para cuando la prosa parece terminada. Cada tarea colapsa en una sesión de debug con humano en el bucle: te conviertes en el test runner, el linter y el typechecker, todo en uno. El throughput se hunde y la confianza en el agente se erosiona por razones que no tienen nada que ver con la capacidad real del modelo — sencillamente nunca le diste una manera de comprobarse a sí mismo.
+
+**Arreglo.** Define el criterio de aceptación *antes* de escribir el prompt: qué tests tienen que pasar, qué comando tiene que salir con código cero, qué endpoint tiene que devolver qué. Expón esas comprobaciones como herramientas que el agente pueda ejecutar de verdad (test runner, linter, typechecker, dev server) y exígele que las corra y reporte los resultados antes de devolver el control. Cerrar el bucle es trabajo del agente, no tuyo — tu trabajo es asegurarte de que el bucle *se pueda* cerrar.
+
 !!! success "Idea clave"
     Ninguno es una trampa sutil. Todos son "la opción obvia y perezosa" en el momento. Solo con saber que son anti-patrones — y nombrarlos en voz alta en code review — ya tienes la mayor parte de la cura.
