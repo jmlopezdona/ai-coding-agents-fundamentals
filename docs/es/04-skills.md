@@ -74,6 +74,90 @@ La mayoría de agentes hacen algo así en cada turno:
 !!! tip "Escribe descripciones para el matcher, no para humanos"
     Incluye los nombres exactos de archivos, patrones glob, nombres de librerías y verbos que usa tu equipo. "Revisar PRs" es un peor trigger que "Usar al ejecutar `/review-pr`, cuando el usuario pegue una URL de PR de GitHub, o cuando se pida revisar un diff."
 
+## Revelación progresiva: archivos referenciados bajo demanda
+
+Una skill no es solo un único `SKILL.md`. Es un directorio, y ese directorio puede empaquetar material adicional: documentos de referencia más largos, archivos de ejemplo, plantillas, snippets de oro, un cheatsheet para una API oscura. El truco es que nada de eso se carga de entrada. El agente lee el cuerpo del `SKILL.md` y *solo si* decide que un archivo referenciado concreto es relevante para la tarea actual lo abre.
+
+Esto es revelación progresiva: la skill anuncia lo que hay disponible, y el agente trae el material profundo bajo demanda. La huella se mantiene pequeña — una descripción, un cuerpo corto, una lista de punteros — hasta que una tarea realmente necesita el recetario de migraciones de 400 líneas o el volcado del schema legacy.
+
+!!! note "Por qué importa"
+    Compara con meter el recetario en `AGENTS.md`: pagarías el coste en tokens en *cada* turno, para cada tarea, para siempre. Con un archivo referenciado dentro de una skill, solo lo pagas cuando la skill dispara *y* el archivo referenciado es relevante. El mismo conocimiento, a una fracción del coste.
+
+## Scripts ejecutables empaquetados
+
+Una skill también puede traer scripts — `scripts/validate.sh`, `generate.py`, `scaffold.ts`, lo que sea — que el agente ejecuta directamente en el entorno local cuando la skill aplica. Esta es la alternativa in-process a MCP: sin servidor, sin protocolo, sin ciclo de vida. Solo código que vive junto a las instrucciones y que el agente invoca cuando es relevante.
+
+Los scripts encajan muy bien con trabajo determinista: validar una migración generada, andamiar un módulo nuevo desde una plantilla, correr un codemod, transformar un payload, comprobar que un archivo cumple un schema. El cuerpo de la skill le dice al agente *cuándo* ejecutar el script y *cómo interpretar* la salida.
+
+!!! tip "Skills con scripts vs MCP"
+    Las skills con scripts empaquetados son más simples de distribuir — son solo archivos en el repo, versionados junto al código. Se ejecutan localmente, en el propio entorno del agente, con las mismas credenciales y el mismo filesystem. Los servidores MCP son más pesados (un proceso corriendo, un protocolo, auth) pero pueden envolver sistemas *remotos* y ser compartidos entre proyectos y clientes. Regla general: si el comportamiento es local y determinista, un script dentro de una skill es el camino más ligero. Si necesita llamar a un servicio remoto o ser reutilizado por varios agentes, tira de MCP.
+
+### Ejemplo de SKILL.md con referencias y un script
+
+```markdown
+---
+name: writing-flyway-migrations
+description: >
+  Use when creating or reviewing Flyway migrations under
+  src/main/resources/db/migration, or on mentions of "migration",
+  "ALTER TABLE", or "Flyway".
+version: 1.3.0
+---
+
+# Writing Flyway migrations
+
+Follow the two-step rule for destructive changes. Full cookbook in
+`reference/destructive-changes.md` — open it when the change touches
+an existing column or index.
+
+For the file name and header, use the template in
+`templates/migration.sql.tmpl`.
+
+## Validation
+
+After writing the migration, run:
+
+    scripts/validate-migration.sh path/to/VXXXX__name.sql
+
+The script checks naming, idempotency, and that `CONCURRENTLY` is
+used on indexed tables > 100k rows. Fix any reported issue before
+handing the change back to the user.
+```
+
+El directorio en disco se ve así:
+
+```
+writing-flyway-migrations/
+├── SKILL.md
+├── reference/
+│   └── destructive-changes.md
+├── templates/
+│   └── migration.sql.tmpl
+└── scripts/
+    └── validate-migration.sh
+```
+
+Solo `SKILL.md` se carga cuando la skill dispara. El documento de referencia y la plantilla se abren bajo demanda; el script se ejecuta bajo demanda.
+
+## Descubrimiento: automático vs explícito
+
+Hay dos formas en las que una skill acaba en el contexto, y no son mutuamente excluyentes.
+
+- **Descubrimiento automático.** El runtime del agente escanea las skills disponibles en cada turno, lee solo los nombres y las descripciones, y decide cuáles aplican a la tarea actual. Es lo que describe la sección del matcher más arriba. Es potente pero depende enteramente de la calidad de la implementación del agente — y de lo precisas que sean tus descripciones de trigger.
+- **Referencia explícita.** Una definición de agente o subagente lista las skills a las que debe tener acceso siempre. Por ejemplo, un subagente dedicado de "migraciones" puede estar cableado para cargar siempre la skill `writing-flyway-migrations`, sin importar lo que piense el matcher. Más predecible, menos mágico, y útil cuando quieres comportamiento garantizado para un rol concreto.
+
+!!! tip "Usa ambos"
+    El descubrimiento automático es ideal para la larga cola de skills que aplican ocasionalmente a muchas tareas. La referencia explícita es ideal para las pocas skills que *definen* para qué sirve un subagente. Una configuración bien hecha usa los dos: automático para amplitud, cableado explícito para el camino crítico.
+
+## Claude Code: skills invocables por el usuario
+
+Claude Code añade un matiz que merece la pena destacar: las skills pueden ser invocadas no solo por el agente (descubiertas automáticamente o cableadas explícitamente) sino también **por el usuario directamente**, igual que invocarías un slash command. El usuario escribe el nombre de la skill, la skill se carga, y el agente trabaja con ella.
+
+Esto difumina la línea entre "skill" y "comando". En la práctica, las skills están reemplazando progresivamente al antiguo concepto de slash command en Claude Code, porque una skill empaqueta todo lo que un comando solía hacer *y más*: instrucciones, archivos referenciados, scripts ejecutables y metadatos más ricos — todo en un único paquete versionado.
+
+!!! note "Específico del proveedor"
+    Este comportamiento invocable por el usuario es una decisión de Claude Code. Otros agentes pueden exponer las skills solo al runtime, o mantener los slash commands como un concepto completamente aparte. Revisa la documentación de tu agente antes de asumir que la misma ergonomía aplica.
+
 ## Ejemplos que compensan
 
 - **`writing-migrations`** — reglas de schema, naming, cambios destructivos en dos pasos.
