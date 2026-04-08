@@ -48,7 +48,7 @@ Las herramientas son los verbos del agente. Sin ellas, el modelo solo puede habl
 - **VCS**: `git_diff`, `git_commit` (a veces).
 - **Servidores MCP**: herramientas arbitrarias del usuario (bases de datos, Jira, APIs internas).
 
-Distintos productos exponen distintas herramientas. Cursor se apoya en su propio buscador indexado. Aider usa git agresivamente. Claude Code expone un conjunto pequeño y afilado con permisos explícitos. Codex CLI ejecuta todo en sandbox por defecto. Los *nombres* difieren; las *categorías* son casi universales.
+Distintos productos exponen distintas herramientas. Cursor se apoya en su propio buscador indexado. Aider usa git agresivamente. Claude Code expone un conjunto reducido y bien definido de herramientas con permisos explícitos. Codex CLI ejecuta todo en sandbox por defecto. Los *nombres* difieren; las *categorías* son casi universales.
 
 !!! warning "Lo que el agente no tiene, no puede hacerlo"
     Si tu agente no tiene `run_shell`, no puede correr tus tests por más claro que se lo pidas. Si no tiene acceso a la web, no puede consultar la documentación actual. Conocer el toolset es la mitad de conocer al agente.
