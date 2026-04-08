@@ -37,6 +37,10 @@ A short list of MCP servers that pay off early:
 - **slack** — post build results or read a thread for context.
 - **your internal docs** — a small custom server over your wiki is often the highest-leverage integration a team can build.
 
+### MCP is what lets one agent span the whole SDLC
+
+MCP is also the mechanism that lets the *same* agent — same loop, same memory, same skills — work across every phase of the SDLC. A Figma server pulls design context and component specs while you draft a UI. A Jira (or Linear) server reads the ticket you're working on and updates its status when you're done. A Datadog (or Grafana) server reads metrics, logs, and traces during an incident. A Terraform Cloud server fetches a plan so the agent can review an infra PR against policy. A GitHub server handles issues, PRs, and reviews. The agent doesn't change between design, code, QA, and ops — only the catalog of tools it has access to does. That's the practical reason MCP matters: it turns "an agent for X" into "an agent, with the right tools for whatever X is right now."
+
 ### A config snippet
 
 Most clients use a JSON file (`~/.claude/mcp.json`, Cursor's `mcp.json`, etc.). The shape is remarkably consistent:

@@ -68,6 +68,12 @@ Cada sesión es babysitting. Nunca lanzas una tarea y vuelves en 30 minutos. El 
 
 **Qué falta:** un sandbox real, un modelo de permisos real y sensores que puedan parar una ejecución cuando algo pinta mal.
 
+### Estás usando el agente en varias fases del SDLC
+
+**Estás usando el agente en varias fases del SDLC.** Cuando el mismo agente ayuda en diseño, código, QA y operaciones, necesitas memoria, skills y servidores MCP compartidos que viajen con él — no tres configuraciones desconectadas.
+
+**Qué falta:** un único harness que arrastre contexto, skills y acceso a herramientas entre fases, para que el agente no pierda todo lo que sabe en cuanto la tarea cambia de forma.
+
 ## Por qué el prompt-engineering no arregla nada de esto
 
 Todos estos síntomas comparten una causa raíz: **el problema no es lo que se le dice al modelo, es la ausencia de un sistema alrededor del modelo.** Un prompt más largo no puede reemplazar a un hook. Un fichero de memoria mejor no puede reemplazar a un sandbox. Una instrucción ingeniosa no puede reemplazar a un sensor automatizado. En cuanto estás intentando usar palabras para tapar huecos estructurales, estás peleando la batalla equivocada.

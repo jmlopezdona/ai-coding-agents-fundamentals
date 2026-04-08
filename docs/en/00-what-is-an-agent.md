@@ -74,6 +74,25 @@ When you use autocomplete, you review at the keystroke level. When you use chat,
 
 This is also why "the AI made a mess" stories almost always come from people using an agent as if it were autocomplete: accepting suggestions one at a time, never looking at the overall diff, never asking what tests were run.
 
+## Beyond code: agents across the SDLC
+
+"Coding agent" is the most visible use case — it's where the tooling is sharpest and the feedback loop is fastest — but the loop itself is general. Anywhere a task can be decomposed into steps with verifiable outcomes, the same mental model applies: **context + tools + loop + verification**. Swap "compile and run tests" for "validate against an OpenAPI schema" or "diff a Terraform plan" and the machine still works.
+
+A non-exhaustive tour of the SDLC:
+
+- **Discovery / product** — synthesizing user interviews into themes, drafting user stories from raw notes.
+- **Design / UX / UI** — pulling components from a design system via an MCP server to Figma, running accessibility audits, generating mockups from a brief.
+- **Estimation and planning** — breaking down epics into stories, estimating by analogy from historical tickets in Jira.
+- **Functional and technical design** — drafting ADRs, sketching C4 diagrams, writing OpenAPI specs, proposing data models.
+- **Coding and unit testing** — the default case this guide focuses on.
+- **QA** — functional and exploratory testing, security scanning (SAST/DAST), performance testing, generating realistic test data.
+- **Deployment** — authoring CI/CD pipelines, writing IaC, reviewing Terraform PRs against policy.
+- **Operations** — incident triage, log and trace analysis, executable runbooks, on-call assistance.
+
+Each phase has its own tools, its own verification signal, and its own definition of "done" — but the loop is the same loop.
+
+The rest of this guide uses coding examples because they're concrete and easy to verify, but everything you'll learn about — AGENTS.md, skills, hooks, MCP, verification loops — generalizes to every phase above.
+
 ## Key takeaway
 
 !!! tip "Key takeaway"

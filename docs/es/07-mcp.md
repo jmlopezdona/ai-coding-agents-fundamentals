@@ -37,6 +37,10 @@ Una lista corta de servidores MCP que compensan pronto:
 - **slack** — publica resultados de build o lee un hilo para contexto.
 - **tus docs internas** — un pequeño servidor a medida sobre tu wiki suele ser la integración con más palanca que un equipo puede construir.
 
+### MCP es lo que permite que un mismo agente cubra todo el SDLC
+
+MCP es también el mecanismo que permite que el *mismo* agente — mismo bucle, misma memoria, mismas skills — trabaje en cada fase del SDLC. Un servidor de Figma trae contexto de diseño y specs de componentes mientras esbozas una UI. Un servidor de Jira (o Linear) lee el ticket en el que estás trabajando y actualiza su estado cuando terminas. Un servidor de Datadog (o Grafana) lee métricas, logs y trazas durante un incidente. Un servidor de Terraform Cloud trae un plan para que el agente revise una PR de infra contra políticas. Un servidor de GitHub gestiona issues, PRs y reviews. El agente no cambia entre diseño, código, QA y ops — solo cambia el catálogo de tools al que tiene acceso. Esa es la razón práctica por la que MCP importa: convierte "un agente para X" en "un agente, con las tools adecuadas para lo que sea X ahora mismo."
+
 ### Un fragmento de configuración
 
 La mayoría de clientes usan un fichero JSON (`~/.claude/mcp.json`, el `mcp.json` de Cursor, etc.). La forma es sorprendentemente consistente:

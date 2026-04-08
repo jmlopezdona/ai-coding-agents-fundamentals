@@ -68,6 +68,12 @@ Every session is babysat. You never kick off a task and come back in 30 minutes.
 
 **What's missing:** a real sandbox, a real permission model, and sensors that can stop a run when something looks wrong.
 
+### You're using the agent across multiple SDLC phases
+
+**You're using the agent across multiple SDLC phases.** When the same agent helps with design, code, QA, and ops, you need shared memory, skills, and MCP servers that travel with it — not three disconnected setups.
+
+**What's missing:** a single harness that carries context, skills, and tool access across phases, so the agent doesn't lose everything it knows the moment the task changes shape.
+
 ## Why prompt-engineering won't fix any of this
 
 All of these symptoms share a root cause: **the problem is not what the model is told, it's the absence of a system around the model.** A longer prompt cannot replace a hook. A better memory file cannot replace a sandbox. A clever instruction cannot replace an automated sensor. Once you're trying to use words to fix structural gaps, you are fighting the wrong battle.

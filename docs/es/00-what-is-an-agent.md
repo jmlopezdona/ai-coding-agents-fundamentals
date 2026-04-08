@@ -74,6 +74,25 @@ Cuando usas autocomplete, revisas a nivel de pulsación. Cuando usas chat, revis
 
 Por eso también las historias de "la IA hizo un destrozo" casi siempre vienen de gente usando un agente como si fuera autocomplete: aceptando sugerencias una a una, sin mirar el diff global, sin preguntar qué tests se ejecutaron.
 
+## Más allá del código: agentes en todo el SDLC
+
+"Coding agent" es el caso de uso más visible — es donde el tooling está más afilado y el bucle de feedback es más rápido — pero el bucle en sí es general. En cualquier sitio donde una tarea pueda descomponerse en pasos con resultados verificables, aplica el mismo modelo mental: **contexto + herramientas + bucle + verificación**. Cambia "compilar y correr tests" por "validar contra un esquema OpenAPI" o "revisar un plan de Terraform" y la máquina sigue funcionando.
+
+Un recorrido no exhaustivo por el SDLC:
+
+- **Discovery / producto** — sintetizar entrevistas de usuario en temas, redactar historias de usuario a partir de notas en bruto.
+- **Diseño / UX / UI** — traer componentes de un design system vía un servidor MCP a Figma, lanzar auditorías de accesibilidad, generar mockups a partir de un brief.
+- **Estimación y planificación** — descomponer épicas en historias, estimar por analogía a partir de tickets históricos en Jira.
+- **Diseño funcional y técnico** — redactar ADRs, esbozar diagramas C4, escribir specs OpenAPI, proponer modelos de datos.
+- **Coding y unit testing** — el caso por defecto en el que esta guía se centra.
+- **QA** — testing funcional y exploratorio, escaneo de seguridad (SAST/DAST), pruebas de rendimiento, generación de datos de test realistas.
+- **Despliegue** — escribir pipelines de CI/CD, escribir IaC, revisar PRs de Terraform contra políticas.
+- **Operaciones** — triage de incidentes, análisis de logs y trazas, runbooks ejecutables, asistencia en on-call.
+
+Cada fase tiene sus propias herramientas, su propia señal de verificación y su propia definición de "hecho" — pero el bucle es el mismo bucle.
+
+El resto de esta guía usa ejemplos de código porque son concretos y fáciles de verificar, pero todo lo que vas a aprender — AGENTS.md, skills, hooks, MCP, bucles de verificación — generaliza a todas las fases anteriores.
+
 ## Idea clave
 
 !!! tip "Idea clave"
