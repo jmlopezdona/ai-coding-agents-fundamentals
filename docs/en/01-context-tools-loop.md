@@ -48,7 +48,7 @@ Tools are the agent's verbs. Without them, the model can only talk. With them, i
 - **VCS**: `git_diff`, `git_commit` (sometimes).
 - **MCP servers**: arbitrary user-provided tools (databases, Jira, internal APIs).
 
-Different products expose different tools. Cursor leans on its own indexed search. Aider uses git aggressively. Claude Code exposes a small, sharp set with explicit permissions. Codex CLI runs everything in a sandbox by default. The *names* differ; the *categories* are nearly universal.
+Different products expose different tools. Cursor leans on its own indexed search. Aider uses git aggressively. Claude Code exposes a small, sharp set of tools with explicit permissions. Codex CLI runs everything in a sandbox by default. The *names* differ; the *categories* are nearly universal.
 
 !!! warning "Tools you don't have, the agent can't do"
     If your agent has no `run_shell`, it cannot run your tests, no matter how clearly you ask. If it has no web access, it cannot check current docs. Knowing the toolset is half of knowing the agent.
