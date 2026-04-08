@@ -53,7 +53,7 @@ Imagine: *"the test `test_invoice_total` is failing, fix it."*
 - **Chat** can help if you paste the test, the failing function, and the stack trace — and it gives you back code you have to paste, save, and re-run yourself. You are the loop.
 - **Agent** opens the test, reads the function, runs the test to see the actual failure, edits the code, re-runs the test, and reports back. The loop is automated.
 
-That last sentence is the whole point of this book.
+That last sentence is the whole point of this guide.
 
 ## A first vocabulary
 

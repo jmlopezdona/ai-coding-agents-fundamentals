@@ -53,7 +53,7 @@ Imagina: *"el test `test_invoice_total` está fallando, arréglalo."*
 - **Chat** puede ayudar si pegas el test, la función que falla y el stack trace — y te devuelve código que tú tienes que pegar, guardar y volver a ejecutar. Tú eres el bucle.
 - **Agente** abre el test, lee la función, ejecuta el test para ver el fallo real, edita el código, vuelve a ejecutar el test e informa. El bucle está automatizado.
 
-Esa última frase es la idea central de este libro.
+Esa última frase es la idea central de esta guía.
 
 ## Un primer vocabulario
 

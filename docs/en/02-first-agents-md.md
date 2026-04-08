@@ -20,7 +20,7 @@ Every major coding agent has a "project instructions" file that gets injected in
 | GitHub Copilot | `.github/copilot-instructions.md` |
 | Continue | `.continuerules` |
 
-The filename differs; the role is identical: a short, version-controlled file that tells the agent how *this specific repo* wants to be worked on. In this book we'll call it `AGENTS.md` generically.
+The filename differs; the role is identical: a short, version-controlled file that tells the agent how *this specific repo* wants to be worked on. In this guide we'll call it `AGENTS.md` generically.
 
 !!! note "It's loaded every turn"
     Unlike the README, this file is *always* in context. Every line costs tokens on every turn. That's why brevity matters — and why it's powerful.

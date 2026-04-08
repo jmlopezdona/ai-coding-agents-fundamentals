@@ -20,7 +20,7 @@ Cada coding agent importante tiene un fichero de "instrucciones del proyecto" qu
 | GitHub Copilot | `.github/copilot-instructions.md` |
 | Continue | `.continuerules` |
 
-El nombre del fichero cambia; el rol es idéntico: un fichero corto, versionado, que le dice al agente cómo *este repo en particular* quiere que se trabaje en él. En este libro lo llamaremos `AGENTS.md` de forma genérica.
+El nombre del fichero cambia; el rol es idéntico: un fichero corto, versionado, que le dice al agente cómo *este repo en particular* quiere que se trabaje en él. En esta guía lo llamaremos `AGENTS.md` de forma genérica.
 
 !!! note "Se carga en cada turno"
     A diferencia del README, este fichero está *siempre* en contexto. Cada línea cuesta tokens en cada turno. Por eso importa la brevedad — y por eso es tan poderoso.
