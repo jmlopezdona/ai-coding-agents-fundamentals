@@ -1,0 +1,136 @@
+site_name: AI Coding Agents — Fundamentals
+site_description: A practical, vendor-neutral guide to working with AI coding agents
+site_author: jmlopezdona
+site_url: https://jmlopezdona.github.io/ai-coding-agents-fundamentals/
+repo_url: https://github.com/jmlopezdona/ai-coding-agents-fundamentals
+repo_name: jmlopezdona/ai-coding-agents-fundamentals
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  language: en
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/brightness-7
+        name: Dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/brightness-4
+        name: Light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.tracking
+    - navigation.indexes
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.action.edit
+  font:
+    text: Inter
+    code: JetBrains Mono
+  icon:
+    repo: fontawesome/brands/github
+
+nav:
+  - Home: index.md
+  - Overview: 00-what-is-an-agent.md
+  - Mental model:
+      - "1. Context, tools, loop": 01-context-tools-loop.md
+      - "2. Your first AGENTS.md": 02-first-agents-md.md
+  - Building blocks:
+      - "3. Slash commands and reusable prompts": 03-slash-commands.md
+      - "4. Skills: knowledge on demand": 04-skills.md
+      - "5. Subagents and delegation": 05-subagents.md
+  - Automation and integration:
+      - "6. Hooks and automation": 06-hooks.md
+      - "7. MCP and external tools": 07-mcp.md
+  - Operating safely:
+      - "8. Permissions, sandbox, execution modes": 08-permissions-sandbox.md
+      - "9. Memory and persistence across sessions": 09-memory-persistence.md
+  - Pitfalls:
+      - "10. Anti-patterns of the first months": 10-anti-patterns.md
+  - What's next:
+      - "11. Signs you need a harness": 11-signs-you-need-a-harness.md
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+      permalink_title: Permanent link to this section
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.smartsymbols
+  - pymdownx.caret
+  - pymdownx.mark
+  - pymdownx.tilde
+
+plugins:
+  - search:
+      lang:
+        - en
+        - es
+  - i18n:
+      docs_structure: folder
+      fallback_to_default: true
+      reconfigure_material: true
+      reconfigure_search: true
+      languages:
+        - locale: en
+          default: true
+          name: English
+          build: true
+        - locale: es
+          name: Español
+          build: true
+          site_name: AI Coding Agents — Fundamentos
+          nav_translations:
+            "Home": "Inicio"
+            "Overview": "Resumen"
+            "Mental model": "Modelo mental"
+            "1. Context, tools, loop": "1. Contexto, herramientas, bucle"
+            "2. Your first AGENTS.md": "2. Tu primer AGENTS.md"
+            "Building blocks": "Bloques de construcción"
+            "3. Slash commands and reusable prompts": "3. Slash commands y prompts reutilizables"
+            "4. Skills: knowledge on demand": "4. Skills: conocimiento bajo demanda"
+            "5. Subagents and delegation": "5. Subagentes y delegación"
+            "Automation and integration": "Automatización e integración"
+            "6. Hooks and automation": "6. Hooks y automatización"
+            "7. MCP and external tools": "7. MCP y herramientas externas"
+            "Operating safely": "Operar con seguridad"
+            "8. Permissions, sandbox, execution modes": "8. Permisos, sandbox y modos de ejecución"
+            "9. Memory and persistence across sessions": "9. Memoria y persistencia entre sesiones"
+            "Pitfalls": "Errores comunes"
+            "10. Anti-patterns of the first months": "10. Anti-patrones de los primeros meses"
+            "What's next": "Qué sigue"
+            "11. Signs you need a harness": "11. Señales de que necesitas un harness"
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/jmlopezdona/ai-coding-agents-fundamentals
