@@ -69,7 +69,9 @@ Claude Code and Codex CLI made a conscious choice: no separate rules mechanism, 
 
 The trade-off is real. You lose glob-scoped rules. You lose the ability to have a "TypeScript only" ruleset that silently activates when needed. In exchange, you get a single file to audit, a single file to review in PRs, and a single answer to "where did that behavior come from?".
 
-If your project is small-to-medium and mostly one language, the single-file approach wins. If you have a polyglot monorepo where backend, frontend, and infra each want their own conventions, a dedicated rules system with glob scoping starts to pay for itself.
+There's a second, deeper reason: it's a more **agentic** approach rather than a programmatic one. Instead of declaring "if the file matches `**/*.tsx`, apply these rules", you spin up a **specialized subagent** for that domain (e.g. a `frontend-react` subagent) and give it its own skills, its own briefing, its own tools. The routing decision moves from a static glob to the agent itself: when the task is about React, delegate to the React subagent; when it's about infra, delegate to the infra subagent. Each subagent loads only what it needs, on demand. Glob-scoped rules try to inject the right context based on file paths; subagents + skills inject the right context based on the *task*. The latter composes better as the project grows.
+
+If your project is small-to-medium and mostly one language, the single-file approach wins. If you have a polyglot monorepo, you can either reach for a dedicated rules system with glob scoping, or lean into specialized subagents — both solve the same problem, just from different ends.
 
 ## Example: a small scoped Cursor rule
 

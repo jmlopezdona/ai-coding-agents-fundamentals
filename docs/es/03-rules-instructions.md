@@ -69,7 +69,9 @@ Claude Code y Codex CLI tomaron una decisión consciente: sin mecanismo de rules
 
 El trade-off es real. Pierdes rules con scope por glob. Pierdes la posibilidad de tener un set "solo TypeScript" que se active en silencio cuando toca. A cambio, ganas un único fichero que auditar, un único fichero que revisar en PRs, y una única respuesta a "¿de dónde salió ese comportamiento?".
 
-Si tu proyecto es pequeño-a-mediano y mayormente de un solo lenguaje, el enfoque de fichero único gana. Si tienes un monorepo polígloto donde backend, frontend e infra cada uno quieren sus convenciones, un sistema de rules dedicado con scope por glob empieza a merecer la pena.
+Hay una segunda razón más profunda: es un enfoque más **agéntico** que programático. En vez de declarar "si el fichero matchea `**/*.tsx`, aplica estas reglas", levantas un **subagente especializado** para ese dominio (p. ej. un subagente `frontend-react`) y le das sus propios skills, su propio briefing y sus propias herramientas. La decisión de enrutado se mueve de un glob estático al propio agente: cuando la tarea es de React, delega al subagente de React; cuando es de infra, delega al subagente de infra. Cada subagente carga sólo lo que necesita, bajo demanda. Las rules con scope por glob intentan inyectar el contexto correcto en base a rutas de ficheros; los subagentes + skills inyectan el contexto correcto en base a la *tarea*. Esto último compone mejor a medida que el proyecto crece.
+
+Si tu proyecto es pequeño-a-mediano y mayormente de un solo lenguaje, el enfoque de fichero único gana. Si tienes un monorepo polígloto, puedes optar por un sistema de rules dedicado con scope por glob, o tirar de subagentes especializados — ambos resuelven el mismo problema, pero desde extremos distintos.
 
 ## Ejemplo: una rule pequeña de Cursor con scope
 
