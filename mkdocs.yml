@@ -111,7 +111,7 @@ plugins:
           site_name: AI Coding Agents — Fundamentos
           nav_translations:
             "Home": "Inicio"
-            "Overview": "Resumen"
+            "Overview": "Introducción"
             "Mental model": "Modelo mental"
             "1. Context, tools, loop": "1. Contexto, herramientas, bucle"
             "2. Your first AGENTS.md": "2. Tu primer AGENTS.md"

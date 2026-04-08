@@ -1,4 +1,4 @@
-# 0. Qué es realmente un AI coding agent
+# Qué es realmente un AI coding agent
 
 La mayoría de developers conocieron los LLMs a través del autocomplete (Copilot) o del chat (ChatGPT). Un *agente* no es ninguna de las dos cosas. El salto cualitativo no está en el modelo — está en el **bucle**: un modelo que puede leer ficheros, ejecutar herramientas, observar resultados y decidir el siguiente paso, repetidamente, hasta terminar una tarea.
 
