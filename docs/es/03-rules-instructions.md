@@ -30,7 +30,7 @@ Los dos son defendibles. Ninguno está mal. Pero si saltas entre herramientas, n
 | Herramienta | Fichero | Alcance | ¿Condicional? |
 |-------------|---------|---------|---------------|
 | Cursor | `.cursor/rules/*.mdc` | Repo + usuario | Sí — frontmatter `alwaysApply`, `globs`, `description` |
-| GitHub Copilot | `.github/copilot-instructions.md` + settings de usuario | Repo + usuario | No — siempre aplicadas |
+| GitHub Copilot | `.github/copilot-instructions.md`, `.github/instructions/*.instructions.md`, settings de usuario | Repo (global), repo (glob-scoped), usuario | Sí — vía glob `applyTo` en ficheros de instrucciones |
 | Windsurf | `.windsurfrules` + reglas globales | Repo + usuario | Limitado |
 | Cline | Fichero `.clinerules` o directorio `.clinerules/` | Repo | Activación por fichero |
 | Continue | Rules en config + `.continuerules` | Repo + usuario | Parcial |

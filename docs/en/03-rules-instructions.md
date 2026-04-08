@@ -30,7 +30,7 @@ Both are defensible. Neither is wrong. But if you hop between tools, you need to
 | Tool | File | Scope | Conditional? |
 |------|------|-------|--------------|
 | Cursor | `.cursor/rules/*.mdc` | Repo + user | Yes — `alwaysApply`, `globs`, `description` frontmatter |
-| GitHub Copilot | `.github/copilot-instructions.md` + user settings | Repo + user | No — always applied |
+| GitHub Copilot | `.github/copilot-instructions.md`, `.github/instructions/*.instructions.md`, user settings | Repo (global), repo (glob-scoped), user | Yes — via `applyTo` glob in instruction files |
 | Windsurf | `.windsurfrules` + global rules | Repo + user | Limited |
 | Cline | `.clinerules` file or `.clinerules/` directory | Repo | File-based activation |
 | Continue | Rules in config + `.continuerules` | Repo + user | Partial |
