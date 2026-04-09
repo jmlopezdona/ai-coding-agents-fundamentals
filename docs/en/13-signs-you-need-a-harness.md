@@ -28,7 +28,7 @@ That crossing is not direct. Before investing in building your own harness, you 
 
 ## Symptoms that you've outgrown the default
 
-Here is the checklist. If more than two or three of these feel familiar, you're past the point where better prompts will help.
+These symptoms show up exactly when you try to ask more of the agent: more autonomy, more things in parallel, more SDLC phases, sustained quality and security, less human in the loop. If more than two or three of these feel familiar, you're past the point where better prompts will help — either **SDD** is missing, or **harness** is missing, or both.
 
 ### The agent repeats the same mistakes across developers
 
@@ -65,6 +65,12 @@ There is no document you can point a new hire to. The knowledge lives in heads a
 You notice you've started every session with a 20-line preamble: "Remember to run the tests, remember the migration rules, remember not to touch X, remember Y, remember Z..." You are doing by hand what a harness should do automatically.
 
 **What's missing:** guides loaded on demand, hooks that enforce rules, and context injected by the harness instead of by you. And, almost always lurking behind this, a missing spec: you're re-injecting every session what should live written down somewhere — that's SDD territory.
+
+### The agent delivers exactly what you asked for — but not what you wanted
+
+You review the PR. The code compiles, the tests pass, the touched files are the expected ones — and it's still not what you had in mind. The agent was literal; you were ambiguous. The gap isn't in its execution, it's in how you described the destination. And it gets worse the more autonomy you grant: the less you watch over its shoulder, the more each misunderstanding costs.
+
+**What's missing:** a spec that captures intent in a way that outlives the session and the next person who reads it — not longer prompts. This is SDD.
 
 ### You're afraid to let the agent run unattended
 

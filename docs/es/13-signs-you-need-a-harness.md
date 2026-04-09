@@ -28,7 +28,7 @@ Ese cruce no es directo. Antes de invertir en construir un harness propio, casi 
 
 ## Síntomas de que te has quedado pequeño con el por defecto
 
-Aquí tienes el checklist. Si más de dos o tres te resultan familiares, estás pasado el punto en el que prompts mejores van a ayudar.
+Estos síntomas aparecen justo cuando intentas pedirle más al agente: más autonomía, más cosas en paralelo, más fases del SDLC, mejora sostenida de calidad y seguridad, menos humano en el bucle. Si más de dos o tres te resultan familiares, estás en el punto en el que prompts mejores ya no ayudan — o falta **SDD**, o falta **harness**, o ambos.
 
 ### El agente repite los mismos errores entre developers
 
@@ -65,6 +65,12 @@ No hay ningún documento al que puedas apuntar a alguien nuevo. El conocimiento 
 Te das cuenta de que empiezas cada sesión con un preámbulo de 20 líneas: "Recuerda ejecutar los tests, recuerda las reglas de migración, recuerda no tocar X, recuerda Y, recuerda Z..." Estás haciendo a mano lo que un harness debería hacer automáticamente.
 
 **Qué falta:** guías que se cargan bajo demanda, hooks que fuerzan reglas y contexto inyectado por el harness en lugar de por ti. Y, casi siempre detrás de esto, una spec ausente: estás reinyectando en cada sesión lo que debería vivir escrito en algún sitio — ese es el territorio de SDD.
+
+### El agente entrega exactamente lo que pediste, pero no lo que querías
+
+Repasas la PR. El código compila, los tests pasan, los archivos tocados son los esperados — y aun así no es lo que tenías en la cabeza. El agente fue literal; tú fuiste ambiguo. La brecha no está en su ejecución, está en cómo le describiste el destino. Y se nota más cuanta más autonomía le das: cuanto menos miras por encima del hombro, más coste tiene cada malentendido.
+
+**Qué falta:** una spec que capture la intención de forma que sobreviva a la sesión y al siguiente que la lea — no prompts más largos. Esto es SDD.
 
 ### Tienes miedo de dejar al agente corriendo solo
 
