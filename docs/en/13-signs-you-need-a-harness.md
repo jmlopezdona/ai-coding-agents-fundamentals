@@ -1,6 +1,6 @@
 # 13. Signs you need a harness
 
-This guide is enough to get your team productive with coding agents. It is *not* enough to keep you productive once you scale beyond a handful of developers or a handful of repositories. At some point you will feel a kind of friction that no amount of prompt-tweaking fixes. That is the moment to graduate from "using an agent" to **harness engineering**.
+This guide is enough to get your team productive with coding agents. It is *not* enough to keep you productive once you scale beyond a handful of developers or a handful of repositories. At some point you will feel a kind of friction that no amount of prompt-tweaking fixes. That is the moment to graduate from "using an agent" to specifying intent properly (**SDD**) and, after that, building the system that sustains it (**harness engineering**).
 
 ## What you'll learn
 
@@ -74,7 +74,7 @@ Every session is babysat. You never kick off a task and come back in 30 minutes.
 
 ### You're using the agent across multiple SDLC phases
 
-**You're using the agent across multiple SDLC phases.** When the same agent helps with design, code, QA, and ops, you need shared memory, skills, and MCP servers that travel with it — not three disconnected setups.
+When the same agent helps with design, code, QA, and ops, you need shared memory, skills, and MCP servers that travel with it — not three disconnected setups.
 
 **What's missing:** a single harness that carries context, skills, and tool access across phases, so the agent doesn't lose everything it knows the moment the task changes shape.
 
@@ -97,4 +97,4 @@ When you recognize these symptoms, jump to the companion guides. This guide is t
     It picks up exactly where this one stops: how to build the guides, sensors, loops, sandboxes, subagents, and structured context that turn an LLM into an agent a team can truly rely on.
 
 !!! success "Key takeaway"
-    If you're tweaking prompts to fix structural problems, you've outgrown this guide. The next step isn't a better prompt — it's a harness.
+    If you're tweaking prompts to fix structural problems, you've outgrown this guide. The next step isn't a better prompt: it's learning to specify intent properly (SDD) and, when that no longer scales, building the harness that sustains it.

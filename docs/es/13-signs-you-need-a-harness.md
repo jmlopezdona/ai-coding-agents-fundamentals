@@ -1,6 +1,6 @@
 # 13. Señales de que necesitas un harness
 
-Esta guía basta para que tu equipo sea productivo con agentes de código. *No* basta para que sigas siéndolo cuando escales más allá de un puñado de developers o un puñado de repositorios. En algún momento sentirás un tipo de fricción que ningún ajuste de prompts arregla. Ese es el momento de graduarte de "usar un agente" al **harness engineering**.
+Esta guía basta para que tu equipo sea productivo con agentes de código. *No* basta para que sigas siéndolo cuando escales más allá de un puñado de developers o un puñado de repositorios. En algún momento sentirás un tipo de fricción que ningún ajuste de prompts arregla. Ese es el momento de graduarte de "usar un agente" a especificar bien lo que quieres (**SDD**) y, después, a construir el sistema que lo hace posible (**harness engineering**).
 
 ## Qué vas a aprender
 
@@ -74,7 +74,7 @@ Cada sesión es babysitting. Nunca lanzas una tarea y vuelves en 30 minutos. El 
 
 ### Estás usando el agente en varias fases del SDLC
 
-**Estás usando el agente en varias fases del SDLC.** Cuando el mismo agente ayuda en diseño, código, QA y operaciones, necesitas memoria, skills y servidores MCP compartidos que viajen con él — no tres configuraciones desconectadas.
+Cuando el mismo agente ayuda en diseño, código, QA y operaciones, necesitas memoria, skills y servidores MCP compartidos que viajen con él — no tres configuraciones desconectadas.
 
 **Qué falta:** un único harness que arrastre contexto, skills y acceso a herramientas entre fases, para que el agente no pierda todo lo que sabe en cuanto la tarea cambia de forma.
 
@@ -97,4 +97,4 @@ Cuando reconozcas estos síntomas, salta a las guías complementarias. Esta guí
     Empieza exactamente donde esta termina: cómo construir las guías, sensores, bucles, sandboxes, subagentes y contexto estructurado que convierten un LLM en un agente del que un equipo puede fiarse de verdad.
 
 !!! success "Idea clave"
-    Si estás retocando prompts para arreglar problemas estructurales, te has quedado pequeño con esta guía. El siguiente paso no es un prompt mejor — es un harness.
+    Si estás retocando prompts para arreglar problemas estructurales, te has quedado pequeño con esta guía. El siguiente paso no es un prompt mejor: es aprender a especificar bien la intención (SDD) y, cuando eso ya no escale, construir el harness que la sostiene.
