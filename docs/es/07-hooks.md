@@ -45,9 +45,10 @@ No eliges uno. Los **apilas**: hooks para lo que el harness soporte, agentes esp
 | Codex CLI | Sí, equivalente | Sí | Sí |
 | Cursor | Parcial (commands, sin hooks de evento generales) | Limitado | Sí |
 | Aider | Limitado (`--lint-cmd`, `--test-cmd` al cerrar turno) | No | Sí |
-| GitHub Copilot | **No** tiene hooks de evento | No (Copilot coding agent corre como un único agente) | Sí — se apoya en git hooks + GitHub Actions |
+| GitHub Copilot CLI | Sí (`PreToolUse`, `PostToolUse`, configurados en `.github/hooks/`) — GA febrero 2026 | Sí — custom agents + sub-agents, además de `/fleet` para subagentes en paralelo | Sí |
+| GitHub Copilot (VS Code) | Agent hooks en preview | Custom agents | Sí |
 
-Si tu herramienta no expone hooks, el determinismo sigue teniendo que vivir en algún sitio — empújalo a agentes especializados y workflows externos.
+Este espacio se mueve rápido — GitHub Copilot en particular pasó de "sin hooks ni subagentes" a "ambos, incluyendo fleets paralelos" en pocos meses. Revisa la documentación de tu herramienta cada pocas versiones. Si tu herramienta *sigue* sin exponer hooks, el determinismo tiene que vivir en algún sitio — empújalo a agentes especializados y workflows externos.
 
 !!! note "El principio es el mismo en todas las herramientas"
     El harness impone, el modelo pide. Que "el harness" sea un hook, un subagente delegado o un job de CI es un detalle de implementación.

@@ -45,9 +45,10 @@ You don't pick one. You **layer** them: hooks for what the harness supports, spe
 | Codex CLI | Yes, equivalent | Yes | Yes |
 | Cursor | Partial (commands, no general event hooks) | Limited | Yes |
 | Aider | Limited (`--lint-cmd`, `--test-cmd` at end-of-turn) | No | Yes |
-| GitHub Copilot | **No** event hooks | No (Copilot coding agent runs as a single agent) | Yes — relies on git hooks + GitHub Actions |
+| GitHub Copilot CLI | Yes (`PreToolUse`, `PostToolUse`, configured in `.github/hooks/`) — GA Feb 2026 | Yes — custom agents + sub-agents, plus `/fleet` for parallel subagents | Yes |
+| GitHub Copilot (VS Code) | Agent hooks in preview | Custom agents | Yes |
 
-If your tool doesn't expose hooks, the determinism still has to live somewhere — push it into specialized agents and external workflows.
+This space is moving fast — GitHub Copilot in particular went from "no hooks, no subagents" to "both, including parallel fleets" inside a few months. Re-check your tool's docs every few releases. If your tool *still* doesn't expose hooks, the determinism has to live somewhere — push it into specialized agents and external workflows.
 
 !!! note "The principle is the same across tools"
     The harness enforces, the model requests. Whether "the harness" is a hook, a delegated subagent, or a CI job is an implementation detail.
