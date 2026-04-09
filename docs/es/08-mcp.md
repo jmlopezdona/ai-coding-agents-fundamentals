@@ -81,7 +81,7 @@ MCP no es la única forma de dar a un agente una nueva capacidad. Una **skill** 
 
 ### Skill + script gana cuando
 
-- La integración es **local** y un script bash/python de 20 líneas la resuelve (`psql` contra tu BD de dev, una corrida local de Playwright, `ffmpeg`, `kubectl` contra tu cluster kind local).
+- La integración es **local** y un script bash/python de 20 líneas la resuelve (`psql` contra tu BD de dev, una ejecución local de Playwright, `ffmpeg`, `kubectl` contra tu cluster kind local).
 - **No hay auth compleja** más allá de una variable de entorno o un `~/.netrc`.
 - Ya existe un **binario CLI** que hace el trabajo — solo necesitas llamarlo.
 - Solo **este proyecto / este agente** lo va a usar.
