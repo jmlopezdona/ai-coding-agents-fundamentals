@@ -22,6 +22,8 @@ El modelo es solo una parte de un agente de código. Todo lo que está *alrededo
 
 Un harness no es un producto — es un ensamblaje. Claude Code, Cursor, Codex y Aider vienen con un harness por defecto. Durante un tiempo, el por defecto basta. Y luego no.
 
+Conviene dejar esto explícito: lo que aprendes en *Fundamentals* es, de hecho, a usar el harness por defecto que traen estas herramientas — el de Claude Code, el de Cursor, el de Copilot, el de Codex. Para muchos equipos y muchos proyectos, ese por defecto es suficiente, y conviene exprimirlo todo lo que dé. Cuando decimos "necesitas un harness" no queremos decir que antes no usaras ninguno, sino que el genérico se queda corto frente a las particularidades de *tu* sistema: tus reglas, tu dominio, tus integraciones, tu nivel de criticidad. Necesitas uno *tailored* — un harness construido para el sistema concreto que estás creando, manteniendo, modernizando o refactorizando. Y sí, cabe esperar que con el tiempo los harnesses por defecto absorban cada vez más capacidades y la frontera del *tailoring* necesario se vaya estrechando — pero mientras esa frontera exista, alguien en tu equipo tiene que cruzarla. Ese cruce es **harness engineering**: llevar la ingeniería a construir el harness que permite implementar sistemas con un alto grado de autonomía, a escala, y a lo largo de todo el SDLC.
+
 ## Síntomas de que te has quedado pequeño con el por defecto
 
 Aquí tienes el checklist. Si más de dos o tres te resultan familiares, estás pasado el punto en el que prompts mejores van a ayudar.

@@ -22,6 +22,8 @@ The model is only one part of a coding agent. Everything *around* the model — 
 
 A harness is not a product — it's an assembly. Claude Code, Cursor, Codex, and Aider each ship with a default harness. For a while, the default is enough. Then it isn't.
 
+It's worth making this explicit: what you learn in *Fundamentals* is, in fact, how to use the default harness those tools ship with — Claude Code's, Cursor's, Copilot's, Codex's. For many teams and many projects, that default is enough, and you should squeeze every drop out of it. When we say "you need a harness," we don't mean you weren't using one before — we mean the generic one falls short of the specifics of *your* system: your rules, your domain, your integrations, your criticality level. You need a *tailored* one — a harness built for the concrete system you're creating, maintaining, modernizing, or refactoring. And yes, over time the default harnesses will absorb more and more capabilities and the frontier of necessary tailoring will keep narrowing — but as long as that frontier exists, someone on your team has to cross it. Crossing it is **harness engineering**: bringing engineering discipline to building the harness that lets you implement systems with a high degree of autonomy, at scale, and across the entire SDLC.
+
 ## Symptoms that you've outgrown the default
 
 Here is the checklist. If more than two or three of these feel familiar, you're past the point where better prompts will help.
