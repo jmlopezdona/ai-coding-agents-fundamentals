@@ -1,15 +1,16 @@
 # 6. Subagents and delegation
 
-A subagent is a fresh agent the main agent launches to handle a sub-task in isolation. Two reasons to use them: **parallelization** (running independent sub-tasks at the same time — searches, analyses, builds, etc.) and **context protection** (keep the main thread clean from large noisy outputs).
+A subagent is a fresh agent the main agent launches to handle a sub-task in isolation. Three reasons to use them: **parallelization** (running independent sub-tasks at the same time — searches, analyses, builds, etc.), **context protection** (keep the main thread clean from large noisy outputs), and **autonomous orchestration** (an agent that coordinates other agents to drive a larger task end-to-end).
 
 ## What you'll learn
 
-- The two real reasons to delegate to a subagent.
+- The three real reasons to delegate to a subagent.
 - When to do the work inline in the main thread instead.
 - How to brief a subagent so it actually returns something useful.
-- The single failure mode that ruins delegation: outsourcing your own thinking.
+- How multi-agent orchestration scales a single human's attention across long-running tasks.
+- The single failure mode that ruins delegation: outsourcing the thinking that was yours to do.
 
-## The two real reasons
+## The three real reasons
 
 ### 1. Context protection
 
@@ -19,8 +20,12 @@ The main agent's conversation is precious. Every token spent on a 4,000-line `gr
 
 Three independent questions — "where is auth handled?", "what does the user model look like?", "how are emails sent?" — can be answered by three subagents at the same time. Doing them sequentially in the main thread is just slower for no benefit.
 
-!!! note "Both reasons are about the main context"
-    Either you're protecting it from noise, or you're filling it faster by parallelizing. If neither applies, you don't need a subagent.
+### 3. Autonomous orchestration
+
+An agent can be built specifically to coordinate other agents — see "Multi-agent orchestration" below. This is qualitatively different from the first two: it's not about protecting one human-driven conversation, it's about scaling a single human's attention across work that would otherwise need constant supervision.
+
+!!! note "Two reasons protect the main context, one extends it"
+    Parallelization and context protection are about a human-driven session staying sharp. Orchestration is about removing the human from the inner loop entirely for well-defined, verifiable tasks. If none of the three applies, you don't need a subagent.
 
 ## The anti-reason
 
@@ -37,8 +42,9 @@ Three independent questions — "where is auth handled?", "what does the user mo
 | Decide which approach to take | Yes | No — never delegate the decision |
 | Summarize a 2,000-line log file | No | Yes — return the summary |
 | Write the final code change | Yes | No — you own the synthesis |
+| Coordinate a multi-step task end-to-end with verification | No | Yes — orchestrator pattern (see below) |
 
-The pattern: **delegate the gathering, keep the deciding.**
+The pattern for human-driven sessions: **delegate the gathering, keep the deciding.** The pattern for orchestration: **delegate the loop, keep the goal and the acceptance check.**
 
 ## Briefing a subagent
 
@@ -117,10 +123,12 @@ Each subagent stays narrow and stateless; the orchestrator carries the high-leve
 
 ## The fatal failure mode
 
-!!! warning "Never delegate the synthesis step"
-    The moment you ask a subagent "...and then decide which approach we should take and start implementing it," you've handed away the most important part of the job. The subagent doesn't have your full context, doesn't know the trade-offs you've already weighed, and doesn't carry the responsibility for the result. The synthesis — *what does all this mean and what should we do?* — is yours. Always.
+!!! warning "Never delegate the synthesis that was yours to do"
+    In a human-driven session, the moment you ask a subagent "...and then decide which approach we should take and start implementing it," you've handed away the most important part of the job. The subagent doesn't have your full context, doesn't know the trade-offs you've already weighed, and doesn't carry the responsibility for the result.
+
+    Orchestration looks like an exception but isn't: an orchestrator *does* synthesize across its subagents — that's its job. What stays with the human is one level up: deciding **what problem to solve**, **what "done" means**, and **how success will be verified**. Delegate that, and no amount of orchestration will save you.
 
 ## Key takeaway
 
 !!! success "Key takeaway"
-    Subagents are for protecting context and parallelizing — not for offloading thinking. Delegate the gathering, keep the deciding, and never delegate the synthesis step.
+    Subagents are for protecting context, parallelizing, and orchestrating autonomous work — not for offloading the thinking that defines the task. Delegate the gathering and the loop; keep the goal, the trade-offs, and the acceptance check.

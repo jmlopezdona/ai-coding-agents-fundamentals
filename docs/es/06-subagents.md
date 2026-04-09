@@ -1,15 +1,16 @@
 # 6. Subagentes y delegación
 
-Un subagente es un agente nuevo que el agente principal lanza para tratar una sub-tarea de forma aislada. Hay dos razones para usarlos: **paralelización** (ejecutar sub-tareas independientes a la vez — búsquedas, análisis, builds, etc.) y **protección del contexto** (mantener el hilo principal limpio de salidas grandes y ruidosas).
+Un subagente es un agente nuevo que el agente principal lanza para tratar una sub-tarea de forma aislada. Hay tres razones para usarlos: **paralelización** (ejecutar sub-tareas independientes a la vez — búsquedas, análisis, builds, etc.), **protección del contexto** (mantener el hilo principal limpio de salidas grandes y ruidosas) y **orquestación autónoma** (un agente que coordina a otros agentes para llevar una tarea mayor de punta a punta).
 
 ## Qué vas a aprender
 
-- Las dos razones reales para delegar a un subagente.
+- Las tres razones reales para delegar a un subagente.
 - Cuándo hacer el trabajo en línea en el hilo principal.
 - Cómo dar un briefing a un subagente para que devuelva algo realmente útil.
-- El único modo de fallo que arruina la delegación: externalizar tu propio pensamiento.
+- Cómo la orquestación multi-agente escala la atención de una sola persona en tareas largas.
+- El único modo de fallo que arruina la delegación: externalizar el pensamiento que te tocaba a ti.
 
-## Las dos razones reales
+## Las tres razones reales
 
 ### 1. Protección del contexto
 
@@ -19,8 +20,12 @@ La conversación del agente principal es preciosa. Cada token gastado en una sal
 
 Tres preguntas independientes — "¿dónde se gestiona auth?", "¿cómo es el modelo de usuario?", "¿cómo se envían los emails?" — pueden ser respondidas por tres subagentes a la vez. Hacerlas secuencialmente en el hilo principal solo es más lento sin ningún beneficio.
 
-!!! note "Ambas razones tratan del contexto principal"
-    O lo estás protegiendo del ruido, o lo estás llenando más rápido paralelizando. Si no aplica ninguna, no necesitas un subagente.
+### 3. Orquestación autónoma
+
+Un agente puede estar construido específicamente para coordinar a otros agentes — ver "Orquestación multi-agente" más abajo. Esto es cualitativamente distinto de las dos primeras razones: no va de proteger una conversación conducida por una persona, va de escalar la atención de una sola persona a trabajo que de otra forma requeriría supervisión constante.
+
+!!! note "Dos razones protegen el contexto principal, una lo extiende"
+    Paralelización y protección del contexto son sobre que una sesión conducida por una persona se mantenga afilada. La orquestación es sobre sacar a la persona del bucle interno por completo en tareas bien definidas y verificables. Si no aplica ninguna de las tres, no necesitas un subagente.
 
 ## La anti-razón
 
@@ -37,8 +42,9 @@ Tres preguntas independientes — "¿dónde se gestiona auth?", "¿cómo es el m
 | Decidir qué enfoque tomar | Sí | No — nunca delegues la decisión |
 | Resumir un log de 2.000 líneas | No | Sí — devolver el resumen |
 | Escribir el cambio de código final | Sí | No — la síntesis es tuya |
+| Coordinar una tarea multi-paso de punta a punta con verificación | No | Sí — patrón orquestador (ver más abajo) |
 
-El patrón: **delega la recolección, quédate con la decisión.**
+El patrón para sesiones conducidas por una persona: **delega la recolección, quédate con la decisión.** El patrón para orquestación: **delega el bucle, quédate con el objetivo y el criterio de aceptación.**
 
 ## Briefing a un subagente
 
@@ -117,10 +123,12 @@ Cada subagente se mantiene estrecho y sin estado; el orquestador lleva la intenc
 
 ## El modo de fallo fatal
 
-!!! warning "Nunca delegues el paso de síntesis"
-    En el momento en que le pides a un subagente "...y luego decide qué enfoque deberíamos tomar y empieza a implementarlo", has cedido la parte más importante del trabajo. El subagente no tiene tu contexto completo, no conoce los trade-offs que ya has sopesado y no carga con la responsabilidad del resultado. La síntesis — *qué significa todo esto y qué deberíamos hacer?* — es tuya. Siempre.
+!!! warning "Nunca delegues la síntesis que te tocaba a ti"
+    En una sesión conducida por una persona, en el momento en que le pides a un subagente "...y luego decide qué enfoque deberíamos tomar y empieza a implementarlo", has cedido la parte más importante del trabajo. El subagente no tiene tu contexto completo, no conoce los trade-offs que ya has sopesado y no carga con la responsabilidad del resultado.
+
+    La orquestación parece una excepción pero no lo es: un orquestador *sí* sintetiza sobre sus subagentes — ese es su trabajo. Lo que se queda con la persona es un nivel por encima: decidir **qué problema resolver**, **qué significa "hecho"** y **cómo se va a verificar el éxito**. Delega eso, y ninguna cantidad de orquestación te salvará.
 
 ## Idea clave
 
 !!! success "Idea clave"
-    Los subagentes son para proteger contexto y paralelizar — no para descargar el pensamiento. Delega la recolección, quédate con la decisión, y nunca delegues el paso de síntesis.
+    Los subagentes son para proteger contexto, paralelizar y orquestar trabajo autónomo — no para descargar el pensamiento que define la tarea. Delega la recolección y el bucle; quédate con el objetivo, los trade-offs y el criterio de aceptación.
