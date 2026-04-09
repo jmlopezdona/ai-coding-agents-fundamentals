@@ -1,6 +1,6 @@
 # 13. Signs you need a harness
 
-This guide is enough to get your team productive with coding agents. It is *not* enough to keep you productive once you scale beyond a handful of developers or a handful of repositories. At some point you will feel a kind of friction that no amount of prompt-tweaking fixes. That is the moment to graduate from "using an agent" to specifying intent properly (**SDD**) and, after that, building the system that sustains it (**harness engineering**).
+This guide is enough to get your team productive with coding agents. It is *not* enough once you want to get more out of them: relying less on the human in the loop, letting them work in parallel, giving them more autonomy, tailoring them to the specifics of your project, taking them into more phases of the SDLC, and having them improve the quality and security of the system continuously. The moment you push in that direction you'll feel a kind of friction that no amount of prompt-tweaking fixes. That is the moment to graduate from "using an agent" to specifying intent properly (**SDD**) and, after that, building the system that sustains it (**harness engineering**).
 
 ## What you'll learn
 

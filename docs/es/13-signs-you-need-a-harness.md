@@ -1,6 +1,6 @@
 # 13. Señales de que necesitas un harness
 
-Esta guía basta para que tu equipo sea productivo con agentes de código. *No* basta para que sigas siéndolo cuando escales más allá de un puñado de developers o un puñado de repositorios. En algún momento sentirás un tipo de fricción que ningún ajuste de prompts arregla. Ese es el momento de graduarte de "usar un agente" a especificar bien lo que quieres (**SDD**) y, después, a construir el sistema que lo hace posible (**harness engineering**).
+Esta guía basta para que tu equipo sea productivo con agentes de código. *No* basta cuando quieres sacarles más partido: depender menos del humano en el bucle, dejarlos trabajar en paralelo, darles más autonomía, ajustarlos a las particularidades de tu proyecto, llevarlos a más fases del SDLC y que mejoren la calidad y la seguridad del sistema de forma continua. En cuanto empujas en esa dirección sentirás un tipo de fricción que ningún ajuste de prompts arregla. Ese es el momento de graduarte de "usar un agente" a especificar bien lo que quieres (**SDD**) y, después, a construir el sistema que lo hace posible (**harness engineering**).
 
 ## Qué vas a aprender
 
