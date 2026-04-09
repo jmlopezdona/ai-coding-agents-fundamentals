@@ -1,4 +1,4 @@
-# 12. Señales de que necesitas un harness
+# 13. Señales de que necesitas un harness
 
 Esta guía basta para que tu equipo sea productivo con agentes de código. *No* basta para que sigas siéndolo cuando escales más allá de un puñado de developers o un puñado de repositorios. En algún momento sentirás un tipo de fricción que ningún ajuste de prompts arregla. Ese es el momento de graduarte de "usar un agente" al **harness engineering**.
 
@@ -16,7 +16,7 @@ El modelo es solo una parte de un agente de código. Todo lo que está *alrededo
 - **Hooks.** Código determinista que corre antes o después de las llamadas a herramientas (`PreToolUse`, `PostToolUse`, `Stop`). Aquí es donde fuerzas reglas, ejecutas linters, bloqueas comandos peligrosos e inyectas contexto.
 - **Sandbox.** El entorno en el que corre el agente — devcontainer, Docker, una VM, una shell restringida. Define qué puede leer, escribir y alcanzar por red.
 - **Subagentes.** Subprocesos especializados con sus propios prompts y acceso a herramientas: un revisor, un runner de tests, un investigador. Permiten descomponer el trabajo y mantener los contextos pequeños.
-- **Memoria.** El sistema en capas del capítulo 10 — memoria de proyecto, memoria de usuario, skills, comandos.
+- **Memoria.** El sistema en capas del capítulo 11 — memoria de proyecto, memoria de usuario, skills, comandos.
 - **MCP y herramientas.** El catálogo de herramientas que el agente puede llamar: sistema de ficheros, shell, búsqueda, servidores MCP propios para tus sistemas internos.
 - **Guías y sensores.** Documentos que enseñan al agente *cómo* hacer algo, y checks que detectan cuando se ha salido del camino.
 

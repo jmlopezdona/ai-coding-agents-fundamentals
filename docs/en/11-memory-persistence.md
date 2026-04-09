@@ -1,4 +1,4 @@
-# 10. Memory and persistence across sessions
+# 11. Memory and persistence across sessions
 
 Agents have several ways to "remember" things: the live conversation, persistent memory files, plans, task lists, and the repository itself. Each of these has a different lifespan, a different audience, and a different failure mode. Treating them as interchangeable is one of the most common early mistakes — and one of the biggest sources of silent quality loss as a team scales.
 

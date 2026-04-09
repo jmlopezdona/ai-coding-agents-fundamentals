@@ -11,7 +11,7 @@ Equipos técnicos que están *empezando* a operar AI coding agents (Claude Code,
 
 ## Cómo leerla
 
-Los 13 capítulos avanzan progresivamente. Si vienes de cero, léelos en orden. Si ya tienes algo de experiencia, salta al capítulo que responda a tu pregunta actual.
+Los 14 capítulos avanzan progresivamente. Si vienes de cero, léelos en orden. Si ya tienes algo de experiencia, salta al capítulo que responda a tu pregunta actual.
 
 ## Capítulos
 
@@ -25,9 +25,10 @@ Los 13 capítulos avanzan progresivamente. Si vienes de cero, léelos en orden. 
 - [7. Garantías deterministas: hooks, agentes especializados y workflows externos](07-hooks.md)
 - [8. MCP y herramientas externas](08-mcp.md)
 - [9. Permisos, sandbox y modos de ejecución](09-permissions-sandbox.md)
-- [10. Memoria y persistencia entre sesiones](10-memory-persistence.md)
-- [11. Anti-patrones de los primeros meses](11-anti-patterns.md)
-- [12. Señales de que necesitas un harness](12-signs-you-need-a-harness.md)
+- [10. Privacidad y datos sensibles](10-privacy-sensitive-data.md)
+- [11. Memoria y persistencia entre sesiones](11-memory-persistence.md)
+- [12. Anti-patrones de los primeros meses](12-anti-patterns.md)
+- [13. Señales de que necesitas un harness](13-signs-you-need-a-harness.md)
 
 ## Qué sigue
 

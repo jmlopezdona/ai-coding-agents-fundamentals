@@ -11,7 +11,7 @@ Technical teams that are *just starting* to operate AI coding agents (Claude Cod
 
 ## How to read it
 
-The 13 chapters build progressively. If you're brand new, read in order. If you already have some experience, jump to the chapter that matches your current question.
+The 14 chapters build progressively. If you're brand new, read in order. If you already have some experience, jump to the chapter that matches your current question.
 
 ## Chapters
 
@@ -25,9 +25,10 @@ The 13 chapters build progressively. If you're brand new, read in order. If you 
 - [7. Deterministic guarantees: hooks, specialized agents, and external workflows](07-hooks.md)
 - [8. MCP and external tools](08-mcp.md)
 - [9. Permissions, sandbox, execution modes](09-permissions-sandbox.md)
-- [10. Memory and persistence across sessions](10-memory-persistence.md)
-- [11. Anti-patterns of the first months](11-anti-patterns.md)
-- [12. Signs you need a harness](12-signs-you-need-a-harness.md)
+- [10. Privacy and sensitive data](10-privacy-sensitive-data.md)
+- [11. Memory and persistence across sessions](11-memory-persistence.md)
+- [12. Anti-patterns of the first months](12-anti-patterns.md)
+- [13. Signs you need a harness](13-signs-you-need-a-harness.md)
 
 ## What's next
 

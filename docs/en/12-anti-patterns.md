@@ -1,4 +1,4 @@
-# 11. Anti-patterns of the first months
+# 12. Anti-patterns of the first months
 
 The same mistakes show up in almost every team's first months with coding agents. None of them are catastrophic on their own — you won't lose a weekend to any single one. But together they are the difference between a team that quietly gets 2x more done and a team that, six months later, decides "this AI stuff doesn't really work for us."
 
@@ -62,7 +62,7 @@ Each pattern below follows the same structure: **symptom**, **why it hurts**, **
 
 **Symptom.** The memory file keeps growing. Every incident adds a line. Nothing is ever removed.
 
-**Why it hurts.** See chapter 10. A log is not memory. Stale notes push out useful ones, and nobody trusts the file anymore.
+**Why it hurts.** See chapter 11. A log is not memory. Stale notes push out useful ones, and nobody trusts the file anymore.
 
 **Fix.** Prune aggressively. If a line hasn't mattered this month, delete it. Keep only non-obvious facts about the user and the project.
 

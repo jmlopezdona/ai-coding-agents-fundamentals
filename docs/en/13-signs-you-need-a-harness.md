@@ -1,4 +1,4 @@
-# 12. Signs you need a harness
+# 13. Signs you need a harness
 
 This guide is enough to get your team productive with coding agents. It is *not* enough to keep you productive once you scale beyond a handful of developers or a handful of repositories. At some point you will feel a kind of friction that no amount of prompt-tweaking fixes. That is the moment to graduate from "using an agent" to **harness engineering**.
 
@@ -16,7 +16,7 @@ The model is only one part of a coding agent. Everything *around* the model — 
 - **Hooks.** Deterministic code that runs before or after tool calls (`PreToolUse`, `PostToolUse`, `Stop`). This is where you enforce rules, run linters, block dangerous commands, and inject context.
 - **Sandbox.** The environment the agent runs in — devcontainer, Docker, a VM, a restricted shell. Defines what it can read, write, and reach on the network.
 - **Subagents.** Specialized sub-processes with their own prompts and tool access: a reviewer, a test-runner, a researcher. They let you decompose work and keep contexts small.
-- **Memory.** The layered system from chapter 10 — project memory, user memory, skills, commands.
+- **Memory.** The layered system from chapter 11 — project memory, user memory, skills, commands.
 - **MCP and tools.** The catalog of tools the agent can call: file system, shell, search, custom MCP servers for your internal systems.
 - **Guides and sensors.** Documents that teach the agent *how* to do something, and checks that detect when it has gone off the rails.
 
