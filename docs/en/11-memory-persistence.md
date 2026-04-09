@@ -4,7 +4,7 @@ Agents have several ways to "remember" things: the live conversation, persistent
 
 ## What you'll learn
 
-- The four persistence layers and what each is for.
+- The four persistence layers, plus the broader fifth layer of project knowledge artifacts.
 - Why dumping everything into "memory" is a bad idea.
 - A decision tree for where a given piece of information belongs.
 - How to write a memory file you won't regret in three months.
@@ -41,15 +41,62 @@ Most coding agents also offer a private, per-user memory — Claude Code's `~/.c
 !!! tip "The golden rule"
     If a teammate would also benefit from knowing it, it belongs in the repo (layer 3), not in your personal memory (layer 4).
 
+### Layer 5: Project knowledge artifacts (on-demand)
+
+The four layers above answer "what does the agent always know?". There's a much wider body of knowledge that belongs to the project but should *not* live in `AGENTS.md` because it's too big and too rarely needed every turn. This is the **on-demand knowledge layer**: long-form artifacts the agent reads only when relevant to the current task.
+
+Typical artifacts:
+
+- **Functional documentation** — specs, requirements, closed user stories.
+- **Architecture documentation** — C4 diagrams, domain models, service contracts.
+- **ADRs** (Architecture Decision Records) — the historical *why* behind decisions.
+- **Execution plans** — roadmaps, migration plans, in-flight phases.
+- **Operational runbooks** — what to do when X fails, how to deploy Y.
+- **Post-mortems and incident reports** — historical lessons.
+- **Glossaries and domain models** — the business vocabulary.
+- **Internal API documentation** — OpenAPI specs, event schemas.
+
+Why this matters: when the agent is implementing "add an endpoint for X", the technical context lives in the code, but the context of *why* and *how it fits* lives in these documents. Without them, the agent makes locally reasonable decisions that are globally inconsistent with the system.
+
+This is different from the layers above:
+
+- **Not `AGENTS.md`** — that file is short and always-on. These artifacts are long and on-demand.
+- **Not a skill** — skills are procedural ("how to do X"). These are descriptive ("what X is and why").
+
+There are three good ways to expose them to the agent:
+
+1. **Versioned files in the repo** (`docs/`, `adr/`) — the agent reads them with its filesystem tool. Best when the artifacts belong to the project and should travel with the code.
+2. **Skills that reference them** as supporting files via progressive disclosure (chapter 5) — the skill's `SKILL.md` is loaded always, the long reference file only when the skill activates.
+3. **An MCP server** over the corporate wiki/CMS (Confluence, Notion, SharePoint — chapter 8) — when the artifacts live outside the repo and are shared across projects.
+
+The decision: **in repo when project-scoped and versionable; in MCP when corporate-wide and shared.**
+
+The key piece — and the part most teams miss — is that these artifacts have to be **discoverable from somewhere the agent already reads**. A short pointer in `AGENTS.md` is usually enough:
+
+```markdown
+## Project knowledge
+
+- Architecture overview: `docs/architecture/overview.md`
+- ADRs: `docs/adr/` (read the index first)
+- Payments domain — read `docs/adr/0007-payments.md` before touching `app/payments/`
+- Runbooks: `docs/runbooks/`
+```
+
+!!! warning "Two anti-patterns to avoid"
+    **Anti-pattern 1: dump it all into `AGENTS.md`.** Pasting the architecture doc inline blows up the context window on every turn. Point at it, don't paste it.
+
+    **Anti-pattern 2: have the artifacts but never link to them.** If `AGENTS.md` doesn't tell the agent that `docs/adr/` exists, the agent won't find it. The artifact might as well not exist.
+
 ## A decision tree
 
 When you find yourself wanting the agent to "remember" something, ask:
 
 1. **Is it relevant only to the current task?** → Keep it in context. Do nothing.
 2. **Is it relevant for the rest of this session?** → Put it in the plan or todo list.
-3. **Is it a fact about the project that every teammate should see?** → `AGENTS.md` in the repo.
-4. **Is it a personal preference about how *you* work?** → User-level memory file.
-5. **Is it a one-off observation you'll never need again?** → Don't write it anywhere.
+3. **Is it a short, always-true fact about the project?** → `AGENTS.md` in the repo.
+4. **Is it long-form project knowledge (architecture, ADRs, runbooks)?** → Layer 5 — versioned doc in the repo (or MCP if it lives in the wiki), with a pointer from `AGENTS.md`.
+5. **Is it a personal preference about how *you* work?** → User-level memory file.
+6. **Is it a one-off observation you'll never need again?** → Don't write it anywhere.
 
 ## An example memory file
 

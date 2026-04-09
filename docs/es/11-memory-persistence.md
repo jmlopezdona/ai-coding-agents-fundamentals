@@ -4,7 +4,7 @@ Los agentes tienen varias formas de "recordar" cosas: la conversación en vivo, 
 
 ## Qué vas a aprender
 
-- Las cuatro capas de persistencia y para qué sirve cada una.
+- Las cuatro capas de persistencia, más la quinta capa más amplia de artefactos de conocimiento del proyecto.
 - Por qué volcarlo todo en "memoria" es mala idea.
 - Un árbol de decisión para saber dónde pertenece cada pieza de información.
 - Cómo escribir un fichero de memoria del que no te arrepientas en tres meses.
@@ -41,15 +41,62 @@ La mayoría de los agentes de código también ofrecen una memoria privada por u
 !!! tip "La regla de oro"
     Si un compañero también se beneficiaría de saberlo, pertenece al repo (capa 3), no a tu memoria personal (capa 4).
 
+### Capa 5: Artefactos de conocimiento del proyecto (bajo demanda)
+
+Las cuatro capas anteriores responden a "¿qué sabe siempre el agente?". Hay un cuerpo de conocimiento mucho más amplio que pertenece al proyecto pero que *no* debe vivir en `AGENTS.md` porque es demasiado grande y demasiado raras veces necesario en cada turno. Esta es la **capa de conocimiento bajo demanda**: artefactos largos que el agente lee solo cuando son relevantes para la tarea actual.
+
+Artefactos típicos:
+
+- **Documentación funcional** — specs, requisitos, historias de usuario cerradas.
+- **Documentación de arquitectura** — diagramas C4, modelos de dominio, contratos entre servicios.
+- **ADRs** (Architecture Decision Records) — el *por qué* histórico de las decisiones.
+- **Planes de ejecución** — roadmaps, planes de migración, fases en curso.
+- **Runbooks operacionales** — qué hacer cuando X falla, cómo desplegar Y.
+- **Post-mortems e incident reports** — el aprendizaje histórico.
+- **Glosarios y modelos de dominio** — el vocabulario del negocio.
+- **Documentación de APIs internas** — specs OpenAPI, esquemas de eventos.
+
+Por qué importa: cuando el agente está implementando "añadir un endpoint para X", el contexto técnico vive en el código, pero el contexto de *por qué* y *cómo encaja* vive en estos documentos. Sin ellos, el agente toma decisiones razonables localmente pero globalmente incoherentes con el sistema.
+
+Esto es distinto de las capas anteriores:
+
+- **No es `AGENTS.md`** — ese fichero es corto y siempre activo. Estos artefactos son largos y bajo demanda.
+- **No es una skill** — las skills son procedimentales ("cómo hacer X"). Estos son descriptivos ("qué es X y por qué").
+
+Hay tres buenas formas de exponerlos al agente:
+
+1. **Ficheros versionados en el repo** (`docs/`, `adr/`) — el agente los lee con su tool de filesystem. Mejor cuando los artefactos pertenecen al proyecto y deben viajar con el código.
+2. **Skills que los referencian** como ficheros de soporte vía progressive disclosure (capítulo 5) — el `SKILL.md` se carga siempre, el fichero de referencia largo solo cuando la skill se activa.
+3. **Un servidor MCP** sobre el wiki/CMS corporativo (Confluence, Notion, SharePoint — capítulo 8) — cuando los artefactos viven fuera del repo y se comparten entre proyectos.
+
+La decisión: **en el repo cuando son del proyecto y versionables; en MCP cuando son corporativos y compartidos.**
+
+La pieza clave — y la parte que la mayoría de equipos se pierden — es que estos artefactos tienen que ser **descubribles desde algún sitio que el agente ya lea**. Un puntero corto en `AGENTS.md` suele bastar:
+
+```markdown
+## Project knowledge
+
+- Architecture overview: `docs/architecture/overview.md`
+- ADRs: `docs/adr/` (read the index first)
+- Payments domain — read `docs/adr/0007-payments.md` before touching `app/payments/`
+- Runbooks: `docs/runbooks/`
+```
+
+!!! warning "Dos anti-patrones que evitar"
+    **Anti-patrón 1: volcarlo todo en `AGENTS.md`.** Pegar el documento de arquitectura inline revienta la ventana de contexto en cada turno. Apunta a él, no lo pegues.
+
+    **Anti-patrón 2: tener los artefactos pero nunca enlazarlos.** Si `AGENTS.md` no le dice al agente que `docs/adr/` existe, el agente no lo encontrará. Es como si el artefacto no existiera.
+
 ## Un árbol de decisión
 
 Cuando quieras que el agente "recuerde" algo, pregúntate:
 
 1. **¿Es relevante solo para la tarea actual?** → Déjalo en el contexto. No hagas nada.
 2. **¿Es relevante para el resto de esta sesión?** → Ponlo en el plan o la lista de todos.
-3. **¿Es un hecho del proyecto que todo el equipo debería ver?** → `AGENTS.md` en el repo.
-4. **¿Es una preferencia personal sobre cómo trabajas *tú*?** → Fichero de memoria de usuario.
-5. **¿Es una observación puntual que no volverás a necesitar?** → No lo escribas en ningún sitio.
+3. **¿Es un hecho corto y siempre cierto del proyecto?** → `AGENTS.md` en el repo.
+4. **¿Es conocimiento largo del proyecto (arquitectura, ADRs, runbooks)?** → Capa 5 — documento versionado en el repo (o MCP si vive en la wiki), con un puntero desde `AGENTS.md`.
+5. **¿Es una preferencia personal sobre cómo trabajas *tú*?** → Fichero de memoria de usuario.
+6. **¿Es una observación puntual que no volverás a necesitar?** → No lo escribas en ningún sitio.
 
 ## Un ejemplo de fichero de memoria
 
