@@ -96,6 +96,25 @@ Cada uno devuelve un resumen; el agente principal los une. Toda la exploración 
 
 Algunos equipos definen subagentes con nombre para roles comunes: un subagente *research* (read-only, búsqueda web + código), un *planner* (produce un plan, no escribe código), un subagente *code-search* (greps, lee, devuelve rutas y snippets). La especialización es útil cuando el rol se reutiliza lo bastante como para justificar un briefing estable — si no, un subagente ad-hoc con un buen prompt vale.
 
+## Orquestación multi-agente: agentes que llaman a agentes
+
+Todo lo anterior describe a una persona conduciendo un único agente que ocasionalmente delega. Pero el mismo primitivo compone un nivel más arriba: un agente puede estar construido como un **orquestador** cuya tarea principal es llamar a *otros* agentes, leer sus salidas, decidir el siguiente paso y correr el bucle de forma autónoma hasta que una tarea mayor esté hecha. El humano hace el briefing al orquestador una vez; el orquestador coordina el resto.
+
+Una forma realista:
+
+- Un agente **orquestador** recibe "saca un nuevo endpoint para X".
+- Llama a un subagente *research* para mapear el código existente.
+- Llama a un subagente *planner* para producir un plan paso a paso.
+- Llama a un subagente *coder* para implementar cada paso.
+- Llama a un subagente *reviewer* (o ejecuta tests/lint como herramientas) para verificar.
+- Si el reviewer falla, vuelve al coder con el feedback.
+- Solo cuando el bucle de verificación cierra, devuelve el control al humano.
+
+Cada subagente se mantiene estrecho y sin estado; el orquestador lleva la intención de alto nivel y la síntesis. Así es como escalas la atención de una sola persona a trabajo largo y multi-paso — y es el puente natural entre "yo conduzco al agente" y "el agente lleva una fase del SDLC de punta a punta".
+
+!!! warning "La orquestación multiplica tanto el leverage como el radio de impacto"
+    Un subagente que entrega código roto desperdicia minutos. Un orquestador autónomo que entrega código roto durante una hora desperdicia una hora. Los setups multi-agente necesitan bucles de verificación **más fuertes**, condiciones de parada más claras y sandboxing más estricto — no más laxo. No tires de orquestación hasta que tu historia de verificación de un solo agente sea sólida (ver capítulo 1).
+
 ## El modo de fallo fatal
 
 !!! warning "Nunca delegues el paso de síntesis"

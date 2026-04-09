@@ -96,6 +96,25 @@ Each returns a summary; the main agent stitches them together. The whole explora
 
 Some teams define named subagents for common roles: a *research* subagent (read-only, web + code search), a *planner* (produces a plan, writes no code), a *code-search* subagent (greps, reads, returns paths and snippets). Specialization is useful when the role is reused often enough to justify a stable brief — otherwise, an ad-hoc subagent with a good prompt is fine.
 
+## Multi-agent orchestration: agents that call agents
+
+Everything above describes a human driving a single agent that occasionally delegates. But the same primitive composes one level up: an agent can itself be built as an **orchestrator** whose main job is to call *other* agents, read their outputs, decide what to do next, and run the loop autonomously until a larger task is done. The human briefs the orchestrator once; the orchestrator coordinates the rest.
+
+A realistic shape:
+
+- An **orchestrator** agent receives "ship a new endpoint for X".
+- It calls a *research* subagent to map the existing code.
+- It calls a *planner* subagent to produce a step-by-step plan.
+- It calls a *coder* subagent to implement each step.
+- It calls a *reviewer* subagent (or runs tests/lint as tools) to verify.
+- If the reviewer fails, it loops back to the coder with the feedback.
+- Only when the verification loop closes does it hand back to the human.
+
+Each subagent stays narrow and stateless; the orchestrator carries the high-level intent and the synthesis. This is how you scale a single human's attention across long-running, multi-step work — and it's the natural bridge between "I drive the agent" and "the agent runs an SDLC phase end-to-end".
+
+!!! warning "Orchestration multiplies both leverage and blast radius"
+    A subagent that ships broken code wastes minutes. An autonomous orchestrator that ships broken code for an hour wastes an hour. Multi-agent setups need **stronger** verification loops, clearer stop conditions, and tighter sandboxing — not weaker. Don't reach for orchestration until your single-agent verification story is solid (see chapter 1).
+
 ## The fatal failure mode
 
 !!! warning "Never delegate the synthesis step"
