@@ -5,7 +5,9 @@ MCP (Model Context Protocol) es una forma estándar de enchufar herramientas y f
 ## Qué vas a aprender
 
 - Qué es MCP, en una página.
-- Cuándo añadir un servidor MCP vs un script local o una herramienta CLI.
+- Cuándo añadir un servidor MCP vs una skill con un script empaquetado.
+- Los criterios concretos que cambian la decisión (auth, reutilización, contrato, estado, governance).
+- Casos arquetípicos donde MCP es la respuesta obvia (Jira, Confluence, Slack...).
 - Riesgos básicos de cadena de suministro al instalar servidores MCP de terceros.
 
 ## El problema que resuelve MCP
@@ -73,26 +75,51 @@ La mayoría de clientes usan un fichero JSON (`~/.claude/mcp.json`, el `mcp.json
 
 Fíjate en que la URL de Postgres usa un rol de solo lectura. Eso no es opcional — es la decisión más importante de este fichero.
 
-## Cuándo MCP merece la pena
+## Skills con scripts vs servidores MCP: cuándo cada uno
 
-Tira de MCP cuando la integración es:
+MCP no es la única forma de dar a un agente una nueva capacidad. Una **skill** con scripts empaquetados (capítulo 5) puede hacer el mismo trabajo en muchos casos — y es dramáticamente más simple. Saber cuándo encaja cada uno es uno de los juicios más útiles de toda la pila.
 
-- **Compartida por el equipo** — todos se benefician de la misma capacidad.
-- **Usada por varios agentes** — no quieres portarla a cada uno.
-- **Autenticada** — los tokens y OAuth no deberían vivir en scripts ad-hoc.
-- **Descubrible** — quieres que el modelo encuentre la capacidad sin que se la cuenten.
+### Skill + script gana cuando
 
-## Cuándo basta con un script
+- La integración es **local** y un script bash/python de 20 líneas la resuelve (`psql` contra tu BD de dev, una corrida local de Playwright, `ffmpeg`, `kubectl` contra tu cluster kind local).
+- **No hay auth compleja** más allá de una variable de entorno o un `~/.netrc`.
+- Ya existe un **binario CLI** que hace el trabajo — solo necesitas llamarlo.
+- Solo **este proyecto / este agente** lo va a usar.
+- Quieres **cero infraestructura**: el script vive en el repo, viaja con el código, sin proceso extra que correr.
 
-No añadas un servidor MCP solo porque puedes. Un script de shell o una herramienta CLI es mejor cuando:
+### Servidor MCP gana cuando al menos uno de estos es cierto
 
-- Es una tarea puntual.
-- Solo tú la vas a usar.
-- Las entradas y salidas son strings simples.
-- Gastarías más tiempo empaquetando el servidor que usando la herramienta.
+- Necesitas **credenciales no triviales**: OAuth, refresh tokens, secretos rotados, multi-tenant.
+- La integración se va a **reutilizar entre varios agentes, equipos o proyectos** — centralizar el wrapper compensa.
+- Necesitas un **contrato tipado**: inputs/outputs validados, descubrimiento de esquema, superficie de tools predecible.
+- El servicio remoto requiere **estado entre llamadas** (sesiones, cursores, suscripciones, queries paginadas).
+- Necesitas **observabilidad y governance** en un punto único: logs, métricas, rate limiting, audit, enforcement de solo lectura.
+- El protocolo o la API es **lo bastante complejo** como para que un wrapper pague su coste (modelos de datos ricos, paginación en todo, formatos de markup propietarios).
 
-!!! tip "Empieza por un script, promueve a MCP"
-    Un buen patrón es prototipar como un script que el agente llama vía `Bash`, y convertirlo en servidor MCP solo cuando dos personas o dos agentes lo necesitan.
+### Ejemplos concretos
+
+- **Postgres en tu portátil, solo dev** → skill con un script `psql`. MCP es overkill.
+- **Postgres en producción / staging compartido** → servidor MCP. Connection pooling, enforcement de solo lectura, query timeouts, audit logging. El criterio que lo cambia: la BD es compartida y tiene SLAs.
+- **Playwright local contra tu frontend de dev** → skill con script. Simple, rápido, sin infraestructura.
+- **Playwright en un grid remoto o Browserstack** → servidor MCP. Sesiones, paralelismo, gestión de credenciales.
+- **`kubectl` contra tu cluster kind local** → skill. **`kubectl` contra un cluster prod compartido con RBAC** → MCP.
+- **Un `curl` a una API pública del tiempo** → skill. **Stripe / Twilio con idempotencia y dinero real** → MCP.
+
+### Casos arquetípicos de MCP: SaaS con APIs ricas
+
+Algunas integraciones son caso de MCP desde el día uno porque cumplen *todos* los criterios a la vez. Dos de los más claros:
+
+- **Jira** — OAuth o API tokens, multi-instancia (Cloud, Server, multi-org), modelo de datos rico (issues, projects, sprints, custom fields, JQL, transiciones de workflow, attachments), permisos por proyecto, paginación obligatoria, rate limits agresivos, y workflows con estado. Múltiples agentes a lo largo del SDLC lo van a querer usar (research, planner, actualizaciones de estado, on-call). Un script `curl` se cae con cualquiera de estas por sí sola.
+- **Confluence** — mismo modelo de auth y forma multi-instancia, estructura jerárquica (spaces → pages → versiones → attachments), markup propietario (storage format / ADF) que nadie quiere parsear con `sed`, y permisos por space. Usos típicos del agente (leer docs de arquitectura, sintetizar runbooks, generar release notes, vincular issues a docs) se benefician todos de un wrapper tipado y centralizado.
+
+La misma lógica aplica a Slack, Notion, Linear, Salesforce, Datadog, Sentry, Figma, GitHub a escala, y la mayoría de APIs de cloud providers. El antitest: si la respuesta a *"¿el agente va a tener que paginar, refrescar tokens o parsear un formato propietario?"* es sí, MCP.
+
+### La regla
+
+**Empieza con una skill + script. Promueve a MCP en el momento en que aparezca cualquiera de estos: credenciales no triviales, reutilización entre proyectos, necesidad de contrato tipado, estado, o governance.**
+
+!!! tip "No pagues el impuesto de MCP hasta que lo necesites"
+    Una skill+script te cuesta un fichero en el repo. Un servidor MCP te cuesta un proceso que correr, una config que mantener, una versión que pinear, una credencial que acotar y un riesgo de cadena de suministro que auditar. El impuesto vale la pena cuando los criterios de arriba aplican — y es peso muerto cuando no.
 
 ## Cadena de suministro y prompt injection
 
@@ -116,4 +143,4 @@ Si eres nuevo con MCP, instala estos por orden:
 4. **un servidor de docs** sobre la wiki de tu equipo — el build a medida con más palanca.
 
 !!! success "Idea clave"
-    MCP es fontanería, no magia. Úsalo cuando la integración necesita ser compartida y descubrible; tira de un script cuando no.
+    MCP es fontanería, no magia, y no es la única opción. Una **skill con un script empaquetado** es el punto de partida correcto para integraciones locales y de un solo proyecto. Tira de un **servidor MCP** cuando las credenciales se complican, la integración tiene que ser compartida, el contrato tiene que ser tipado, o la API es lo bastante rica como para merecer un wrapper. Empieza barato, promueve cuando los criterios apliquen.

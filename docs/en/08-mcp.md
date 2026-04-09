@@ -5,7 +5,9 @@ MCP (Model Context Protocol) is a standard way to plug external tools and data s
 ## What you'll learn
 
 - What MCP is, in one page.
-- When to add an MCP server vs a local script or a CLI tool.
+- When to add an MCP server vs a skill with a bundled script.
+- The concrete criteria that flip the decision (auth, reuse, contract, state, governance).
+- Archetypal cases where MCP is the obvious answer (Jira, Confluence, Slack...).
 - Basic supply-chain risks of installing third-party MCP servers.
 
 ## The problem MCP solves
@@ -73,26 +75,51 @@ Most clients use a JSON file (`~/.claude/mcp.json`, Cursor's `mcp.json`, etc.). 
 
 Note the Postgres URL uses a read-only role. That is not optional — it's the single most important decision in this file.
 
-## When MCP is worth it
+## Skills with scripts vs MCP servers: when to use which
 
-Reach for MCP when the integration is:
+MCP isn't the only way to give an agent a new capability. A **skill** with bundled scripts (chapter 5) can do the same job in many cases — and is dramatically simpler. Knowing when each one fits is one of the most useful judgment calls in the whole stack.
 
-- **Shared across the team** — everyone benefits from the same capability.
-- **Used by multiple agents** — you don't want to port it to each one.
-- **Authenticated** — tokens and OAuth belong outside ad-hoc scripts.
-- **Discoverable** — you want the model to find the capability without being told.
+### Skill + script wins when
 
-## When a plain script is enough
+- The integration is **local** and a 20-line bash/python script solves it (`psql` against your dev DB, a local Playwright run, `ffmpeg`, `kubectl` against your local kind cluster).
+- There's **no complex auth** beyond an env var or a `~/.netrc` entry.
+- An existing **CLI binary** already does the job — you just need to call it.
+- Only **this project / this agent** uses it.
+- You want **zero infrastructure**: the script lives in the repo, ships with the code, no extra process to run.
 
-Don't add an MCP server just because you can. A shell script or CLI tool is better when:
+### MCP server wins when at least one of these is true
 
-- It's a one-off task.
-- Only you will use it.
-- The inputs and outputs are simple strings.
-- You'd spend more time packaging the server than using the tool.
+- You need **non-trivial credentials**: OAuth, refresh tokens, rotated secrets, multi-tenant access.
+- The integration will be **reused across multiple agents, teams, or projects** — centralizing the wrapper pays off.
+- You need a **typed contract**: validated inputs/outputs, schema discovery, predictable tool surface.
+- The remote service requires **state between calls** (sessions, cursors, subscriptions, paginated queries).
+- You need **observability and governance** at a single point: logs, metrics, rate limiting, audit, read-only enforcement.
+- The protocol or API is **complex enough** that a wrapper pays for itself (rich data models, paginated everything, proprietary markup formats).
 
-!!! tip "Start with a script, promote to MCP"
-    A good pattern is to prototype as a script the agent calls via `Bash`, and only convert it to an MCP server once two people or two agents need it.
+### Worked examples
+
+- **Postgres on your laptop, dev only** → skill with a `psql` script. MCP is overkill.
+- **Postgres in production / shared staging** → MCP server. Connection pooling, read-only enforcement, query timeouts, audit logging. The criterion that flips it: the database is shared and has SLAs.
+- **Playwright running locally against your dev frontend** → skill with a script. Simple, fast, no infra.
+- **Playwright on a remote browser farm or Browserstack** → MCP server. Sessions, parallelism, credential management.
+- **`kubectl` against your local kind cluster** → skill. **`kubectl` against a shared prod cluster with RBAC** → MCP.
+- **A `curl` to a public weather API** → skill. **Stripe / Twilio with idempotency and real money** → MCP.
+
+### Archetypal MCP cases: rich-API SaaS
+
+Some integrations are MCP cases on day one because they hit *all* the criteria at once. Two of the clearest:
+
+- **Jira** — OAuth or API tokens, multi-instance (Cloud, Server, multi-org), rich data model (issues, projects, sprints, custom fields, JQL, workflow transitions, attachments), per-project permissions, mandatory pagination, aggressive rate limits, and stateful workflows. Multiple agents across the SDLC will want to use it (research, planner, status updates, on-call). A `curl` script collapses under any of these alone.
+- **Confluence** — same auth model and multi-instance shape, hierarchical structure (spaces → pages → versions → attachments), proprietary markup (storage format / ADF) that no one wants to parse with `sed`, and per-space permissions. Typical agent uses (read architecture docs, synthesize runbooks, generate release notes, link issues to docs) all benefit from a typed, centralized wrapper.
+
+The same logic applies to Slack, Notion, Linear, Salesforce, Datadog, Sentry, Figma, GitHub at scale, and most cloud provider APIs. The antitest: if the answer to *"will the agent need to paginate, refresh tokens, or parse a proprietary format?"* is yes, MCP.
+
+### The rule
+
+**Start with a skill + script. Promote to MCP the moment any of these appears: non-trivial credentials, cross-project reuse, typed contract needs, state, or governance.**
+
+!!! tip "Don't pay MCP's tax until you need it"
+    A skill+script costs you a file in the repo. An MCP server costs you a process to run, a config to maintain, a version to pin, a credential to scope, and a supply-chain risk to audit. The tax is worth it when the criteria above kick in — and dead weight when they don't.
 
 ## Supply chain and prompt injection
 
@@ -116,4 +143,4 @@ If you're new to MCP, install these in order:
 4. **a docs server** over your team's wiki — the highest-leverage custom build.
 
 !!! success "Key takeaway"
-    MCP is plumbing, not magic. Use it when integration needs to be shared and discoverable; reach for a script when it doesn't.
+    MCP is plumbing, not magic, and it's not the only option. A **skill with a bundled script** is the right starting point for local, single-project integrations. Reach for an **MCP server** when credentials get complex, the integration needs to be shared, the contract has to be typed, or the API is rich enough to deserve a wrapper. Start cheap, promote when the criteria kick in.
