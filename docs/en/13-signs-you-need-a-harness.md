@@ -80,10 +80,15 @@ All of these symptoms share a root cause: **the problem is not what the model is
 
 ## What's next
 
-When you recognize these symptoms, jump to the companion guide:
+When you recognize these symptoms, jump to the companion guides. This guide is the first volume of a trilogy; the other two pick up from different angles:
+
+!!! info "Spec-Driven Development"
+    Next up: **[Spec-Driven Development](https://jmlopezdona.github.io/ai-coding-agents-sdd/)**
+
+    The bottleneck is no longer writing code — it's specifying intent clearly and keeping that spec alive as the code evolves. This guide covers the loops and patterns that make the agent consistently build what you actually meant — and when that discipline helps versus when it turns into bureaucracy.
 
 !!! info "Harness Engineering"
-    Next up: **[Harness Engineering — building software at scale with agents](https://jmlopezdona.github.io/ai-coding-agents-harness/)**
+    And after that: **[Harness Engineering — building software at scale with agents](https://jmlopezdona.github.io/ai-coding-agents-harness/)**
 
     It picks up exactly where this one stops: how to build the guides, sensors, loops, sandboxes, subagents, and structured context that turn an LLM into an agent a team can truly rely on.
 

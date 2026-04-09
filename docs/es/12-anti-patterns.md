@@ -82,5 +82,69 @@ Cada patrón sigue la misma estructura: **síntoma**, **por qué duele**, **arre
 
 **Arreglo.** Define el criterio de aceptación *antes* de escribir el prompt: qué tests tienen que pasar, qué comando tiene que salir con código cero, qué endpoint tiene que devolver qué. Expón esas comprobaciones como herramientas que el agente pueda ejecutar de verdad (test runner, linter, typechecker, dev server) y exígele que las corra y reporte los resultados antes de devolver el control. Cerrar el bucle es trabajo del agente, no tuyo — tu trabajo es asegurarte de que el bucle *se pueda* cerrar.
 
+## 10. Hooks que solo loguean
+
+**Síntoma.** Un hook ejecuta `pnpm lint`, redirige todo a `/tmp/agent-hooks.log` y sale con 0. "Funciona" — se ejecutó. Pero el agente nunca se entera de lo que encontró, porque nada vuelve nunca a su contexto. Un humano descubre el fallo días después al leer por casualidad el fichero de log.
+
+**Por qué duele.** Un hook no vale por haberse ejecutado — vale porque el agente (o el siguiente revisor) se enteró de que se ejecutó y actuó sobre el resultado. Un hook que solo loguea es decoración. Le da al equipo la *sensación* de automatización sin ninguno de los beneficios de cerrar el bucle, y el modo de fallo es silencioso: nada grita que la red de seguridad no está cazando nada.
+
+**Arreglo.** Cablea el código de salida con intención. Si el linter falla, el hook tiene que salir con código distinto de cero para que el harness inyecte el stderr de vuelta al contexto del agente. Trata los hooks como **sensores**, no solo como automatizadores (capítulo 7). Si genuinamente solo quieres observar — vale, pero sé explícito en que ese hook es telemetría, no enforcement.
+
+## 11. Validación pesada en cada edición
+
+**Síntoma.** `tsc --noEmit` y la suite de tests completa corren en `PostToolUse` después de cada `Edit`. El agente, a mitad de un refactor, ve una avalancha de errores de tipos transitorios causados por código que aún no ha terminado de escribir. "Arregla" símbolos que no estaban rotos — solo estaban a medio renombrar. El bucle se ralentiza hasta arrastrarse.
+
+**Por qué duele.** Linters y typecheckers son caros, ruidosos y fallan a menudo a mitad de refactor. Ejecutarlos en cada edición desperdicia tokens, ralentiza el inner loop y produce feedback inestable al que el agente reacciona en exceso. Obtienes peor código *y* peor experiencia.
+
+**Arreglo.** Formatea por edición, valida al cerrar el turno (capítulo 7). Prettier / ruff format / gofmt pertenecen a `PostToolUse`. ESLint, mypy, `tsc`, pytest pertenecen a `Stop` / `SubagentStop`, donde se ejecutan una vez sobre todo lo que cambió y producen una señal de feedback única y coherente.
+
+## 12. Un servidor MCP para todo
+
+**Síntoma.** El equipo instala un servidor MCP para cada cosa externa que toca el agente — incluyendo un wrapper para `psql` contra la BD de dev local, un wrapper para `ffmpeg`, un wrapper para la API pública del tiempo. Cada uno significa un proceso que correr, una config que mantener, una versión que pinear y un riesgo de cadena de suministro que auditar. Después de dos semanas, la mitad del setup MCP del equipo está roto y nadie está seguro de qué servidores realmente necesitan.
+
+**Por qué duele.** MCP es fontanería, no magia, y no es gratis. Se gana su complejidad cuando hay auth no trivial, reutilización entre proyectos, contrato tipado, estado o governance que imponer. Nada de eso aplica a "ejecutar un CLI local". Estás pagando overhead de nivel enterprise por un script bash de 15 líneas.
+
+**Arreglo.** Empieza con una **skill + script empaquetado** (capítulos 5 y 8). Promueve a servidor MCP solo cuando aplique al menos uno de los criterios: OAuth/refresh tokens, varios agentes/equipos lo necesitan, necesitas un contrato tipado, la API tiene estado, o la governance exige logging centralizado. No pagues el impuesto de MCP hasta que lo necesites.
+
+## 13. La misma regla en tres sitios
+
+**Síntoma.** "Preferimos pnpm a npm" está escrito en `.cursor/rules/`, en `AGENTS.md` y en una skill `package-management`. Seis meses después, alguien actualiza uno de los tres y olvida los otros dos. El agente ahora a veces sugiere pnpm, a veces npm, y nadie consigue averiguar por qué.
+
+**Por qué duele.** La fragmentación crea contradicciones. El comportamiento del agente depende de qué copia "gana" en una sesión dada, lo cual es opaco incluso para las personas que escribieron las reglas. Las actualizaciones se pudren en silencio. El code review se convierte en un juego de adivinanzas.
+
+**Arreglo.** Elige un único hogar para cada convención (capítulo 3). Siempre activa, corta y de equipo → `AGENTS.md`. Con scope por glob o por lenguaje → sistema de rules, si tu herramienta lo tiene. Procedimental y reutilizable → una skill. Audita periódicamente y borra duplicados. Una única fuente de verdad por convención.
+
+## 14. Datos corporativos en herramientas tier consumer
+
+**Síntoma.** Un developer pega un stack trace de producción, una spec interna de arquitectura o un trozo de código bajo NDA en ChatGPT Free o Claude Pro para "pedir una segunda opinión rápida". Nadie lo nota, nadie está informado, y el mismo developer lo hace diez veces más esa semana. Ninguno de esos planes prohíbe contractualmente al proveedor entrenar con esa entrada.
+
+**Por qué duele.** Este es el anti-patrón con más en juego de toda la guía. No es un bug de calidad — es una brecha de privacidad, cumplimiento y ventaja competitiva. Una vez que los datos se han transmitido a un endpoint tier consumer sin DPA, no puedes des-enviarlos. Multas de GDPR, confianza del cliente, exposición regulatoria y filtración de secretos comerciales viven todos aquí.
+
+**Arreglo.** Elige el plan del proveedor *antes* de elegir la herramienta (capítulo 10). Para datos corporativos, usa solo canales con un contrato escrito de no-training: APIs directas, tiers Enterprise/Team, o Bring-Your-Own-Key dentro de un canal API controlado. Firma un DPA. Forma al equipo — el developer que pega un stack trace en la ventana equivocada es el modelo de amenaza, no el modelo en sí.
+
+## 15. Conocimiento del proyecto que el agente no puede descubrir
+
+**Síntoma.** El equipo ha invertido en docs de arquitectura preciosos, ADRs en `docs/adr/`, runbooks, un glosario de dominio. Nada de eso se referencia desde `AGENTS.md`. El agente hace cambios localmente razonables que contradicen un ADR del que nadie le habló, y un revisor senior tiene que cazar el mismo desvío en PR tras PR.
+
+**Por qué duele.** Conocimiento que existe pero no es descubrible es, desde el punto de vista del agente, conocimiento que no existe. Pagaste el coste de escribirlo y no recibes ninguno de los beneficios. El agente no es tonto — simplemente no sabe dónde mirar, y no va a hacer grep especulativo en tu repo en busca de documentos de los que nunca le hablaste.
+
+**Arreglo.** Añade una sección corta "Project knowledge" en `AGENTS.md` que apunte a los artefactos largos (capítulo 11): overview de arquitectura, índice de ADRs, runbooks, glosario. Sé explícito sobre *cuándo* leer cada uno ("lee `docs/adr/0007-payments.md` antes de tocar `app/payments/`"). No pegues el contenido inline — apunta a él. El puntero es todo el trabajo.
+
+## 16. Orquestación autónoma sin verificación fuerte
+
+**Síntoma.** El equipo construye un agente orquestador que llama a un subagente research, un planner, un coder y un reviewer. Le dejan correr una hora con "saca la feature X". Vuelve orgulloso con un estado verde. El diff está roto en tres sitios, los tests no ejercitan realmente el código nuevo, y el subagente reviewer ha puesto el sello de aprobación a todo.
+
+**Por qué duele.** La orquestación multi-agente multiplica tanto el leverage *como* el radio de impacto (capítulo 6). Una sesión de un solo agente que entrega código roto desperdicia minutos; un orquestador que entrega código roto sin supervisión desperdicia una hora y quema la confianza en todo el patrón. Sin gates de verificación fuertes, el orquestador solo produce confianza más rápido, no corrección.
+
+**Arreglo.** No tires de orquestación hasta que tu historia de verificación de un solo agente sea sólida. Cada subagente en una cadena orquestada tiene que tener un gate determinista sobre su salida: tests reales, linters reales, typechecks reales — no "el subagente reviewer dijo que pinta bien". Añade condiciones de parada explícitas y presupuestos. Trata al orquestador como código que se va a producción, porque funcionalmente lo es.
+
+## 17. Tratar al agente solo como un asistente de codificación
+
+**Síntoma.** El equipo usa al agente para escribir código y tests unitarios, y para nada más. El diseño ocurre en Figma sin el agente. Los ADRs se escriben a mano. El triage de incidentes es manual. Los planes de test viven en la cabeza de alguien. El agente se trata como un autocomplete fancy, y la mayor parte del SDLC nunca lo ve.
+
+**Por qué duele.** El mismo modelo mental — contexto, herramientas, bucle, verificación — aplica a todo el SDLC, no solo a la codificación (capítulo 0). Al acotar el agente a "escribe código", dejas el 80% del valor alcanzable encima de la mesa: discovery, diseño, planificación, ADRs, estrategia de QA, revisión de despliegue, asistencia en on-call, post-mortems. Peor, las partes que *no* delegas se convierten en el nuevo cuello de botella precisamente porque la parte de codificación se ha hecho más rápida.
+
+**Arreglo.** Trata "AI coding agent" como una etiqueta engañosa. El agente es un bucle general de completar tareas con acceso a ficheros y herramientas — apúntalo a cada fase donde el trabajo se descompone en pasos verificables. Cablea servidores MCP para las herramientas que cada fase necesita (Figma, Jira, Datadog, Terraform Cloud). Construye skills para los workflows recurrentes en cada fase. El mismo agente, el mismo modelo, el mismo bucle — solo un catálogo distinto de herramientas por fase.
+
 !!! success "Idea clave"
     Ninguno es una trampa sutil. Todos son "la opción obvia y perezosa" en el momento. Solo con saber que son anti-patrones — y nombrarlos en voz alta en code review — ya tienes la mayor parte de la cura.

@@ -80,10 +80,15 @@ Todos estos síntomas comparten una causa raíz: **el problema no es lo que se l
 
 ## Qué sigue
 
-Cuando reconozcas estos síntomas, salta a la guía complementaria:
+Cuando reconozcas estos síntomas, salta a las guías complementarias. Esta guía es el primer volumen de una trilogía; las otras dos toman el relevo desde ángulos distintos:
+
+!!! info "Spec-Driven Development"
+    Siguiente paso: **[Spec-Driven Development](https://jmlopezdona.github.io/ai-coding-agents-sdd/)**
+
+    El cuello de botella ya no es escribir código, sino especificar la intención con claridad y mantener esa especificación viva a medida que el código evoluciona. Esta guía cubre los ciclos y patrones para que el agente ejecute consistentemente lo que de verdad querías — y cuándo esa disciplina ayuda y cuándo se convierte en burocracia.
 
 !!! info "Harness Engineering"
-    A continuación: **[Harness Engineering — construir software a escala con agentes](https://jmlopezdona.github.io/ai-coding-agents-harness/)**
+    Y después: **[Harness Engineering — construir software a escala con agentes](https://jmlopezdona.github.io/ai-coding-agents-harness/)**
 
     Empieza exactamente donde esta termina: cómo construir las guías, sensores, bucles, sandboxes, subagentes y contexto estructurado que convierten un LLM en un agente del que un equipo puede fiarse de verdad.
 

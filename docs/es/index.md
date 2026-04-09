@@ -32,6 +32,8 @@ Los 14 capítulos avanzan progresivamente. Si vienes de cero, léelos en orden. 
 
 ## Qué sigue
 
-Cuando esta guía deje de bastarte — cuando tu equipo empiece a sentir el dolor de operar agentes a escala — el paso natural es la guía complementaria:
+Esta guía es el primer volumen de una trilogía. Cuando deje de bastarte — cuando tu equipo empiece a sentir el dolor de operar agentes a escala — los siguientes pasos son:
 
-👉 **[Harness Engineering — construir software a escala con agentes](https://jmlopezdona.github.io/ai-coding-agents-harness/)**
+👉 **[Spec-Driven Development](https://jmlopezdona.github.io/ai-coding-agents-sdd/)** — cómo especificar la intención con claridad y mantener esa especificación viva mientras el código evoluciona.
+
+👉 **[Harness Engineering — construir software a escala con agentes](https://jmlopezdona.github.io/ai-coding-agents-harness/)** — cómo construir las guías, sensores, bucles, sandboxes, subagentes y contexto estructurado que convierten un LLM en un agente del que un equipo puede fiarse.

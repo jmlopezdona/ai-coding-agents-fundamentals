@@ -32,6 +32,8 @@ The 14 chapters build progressively. If you're brand new, read in order. If you 
 
 ## What's next
 
-When this guide stops being enough — when your team starts feeling the pain of running agents at scale — the natural next step is the companion guide:
+This guide is the first volume of a trilogy. When it stops being enough — when your team starts feeling the pain of running agents at scale — the next steps are:
 
-👉 **[Harness Engineering — building software at scale with agents](https://jmlopezdona.github.io/ai-coding-agents-harness/)**
+👉 **[Spec-Driven Development](https://jmlopezdona.github.io/ai-coding-agents-sdd/)** — how to specify intent clearly and keep that spec alive as the code evolves.
+
+👉 **[Harness Engineering — building software at scale with agents](https://jmlopezdona.github.io/ai-coding-agents-harness/)** — how to build the guides, sensors, loops, sandboxes, subagents, and structured context that turn an LLM into an agent a team can rely on.
