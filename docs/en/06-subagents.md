@@ -1,6 +1,6 @@
 # 6. Subagents and delegation
 
-A subagent is a fresh agent the main agent launches to handle a sub-task in isolation. Two reasons to use them: **parallelization** (independent searches at once) and **context protection** (keep the main thread clean from large noisy outputs).
+A subagent is a fresh agent the main agent launches to handle a sub-task in isolation. Two reasons to use them: **parallelization** (running independent sub-tasks at the same time — searches, analyses, builds, etc.) and **context protection** (keep the main thread clean from large noisy outputs).
 
 ## What you'll learn
 
