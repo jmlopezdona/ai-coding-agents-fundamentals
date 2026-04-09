@@ -54,7 +54,7 @@ nav:
       - "5. Skills: knowledge on demand": 05-skills.md
       - "6. Subagents and delegation": 06-subagents.md
   - Automation and integration:
-      - "7. Hooks and automation": 07-hooks.md
+      - "7. Deterministic guarantees: hooks, specialized agents, and external workflows": 07-hooks.md
       - "8. MCP and external tools": 08-mcp.md
   - Operating safely:
       - "9. Permissions, sandbox, execution modes": 09-permissions-sandbox.md
@@ -122,7 +122,7 @@ plugins:
             "5. Skills: knowledge on demand": "5. Skills: conocimiento bajo demanda"
             "6. Subagents and delegation": "6. Subagentes y delegación"
             "Automation and integration": "Automatización e integración"
-            "7. Hooks and automation": "7. Hooks y automatización"
+            "7. Deterministic guarantees: hooks, specialized agents, and external workflows": "7. Garantías deterministas: hooks, agentes especializados y workflows externos"
             "8. MCP and external tools": "8. MCP y herramientas externas"
             "Operating safely": "Operar con seguridad"
             "9. Permissions, sandbox, execution modes": "9. Permisos, sandbox y modos de ejecución"
