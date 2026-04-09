@@ -1,23 +1,58 @@
-# 7. Hooks and automation
+# 7. Deterministic guarantees: hooks, specialized agents, and external workflows
 
-Hooks are commands the harness runs automatically on events (before a tool call, after an edit, before a commit). They're how you enforce things the agent shouldn't be trusted to remember — formatting, linting, secret scanning, test runs.
+Some steps must happen — formatting, linting, type checks, secret scanning, tests — and "I asked the agent to remember" is not a strategy. This chapter is about the mechanisms that make those steps reliable: **hooks** when the harness offers them, **specialized agents** when it doesn't (or when judgment is needed), and **external workflows** (CI, GitHub Actions, git hooks) as the safety net. In practice you layer all three.
+
+The same mechanisms also feed failures *back* to whoever is iterating: the agent itself in the **inner loop** (so it self-corrects without waiting for a human), and the human or upstream agent in the **outer loop** (so collaboration stays grounded in real signal, not in trust).
 
 ## What you'll learn
 
-- The difference between "asking the agent to do X" and "making the harness enforce X."
-- Common hooks worth setting up on day one.
-- Why hooks beat instructions for anything safety-critical.
-- When to run things per-edit versus at end-of-turn.
-- How hooks act as sensors that feed failures back into the agent's context.
+- The difference between "asking the agent to do X" and "making something else enforce X".
+- Three mechanisms for deterministic guarantees, and when each one fits.
+- How those mechanisms feed feedback into the inner loop (agent self-correction) and the outer loop (human/agent review).
+- Which tools support which mechanism today.
+- Common hooks worth setting up on day one, and how to debug them.
+- Why hooks act as **sensors**, not just automators.
 
-## Instructions are hopes, hooks are guarantees
+## Instructions are hopes, guarantees are configuration
 
 Every team that adopts an AI coding agent goes through the same cycle. Someone writes in `AGENTS.md` or `CLAUDE.md`: "Always run `pnpm lint` after editing TypeScript." For a while it works. Then the model changes, the context gets long, the task gets urgent, and the instruction quietly stops being followed. The agent ships code that fails CI.
 
-The lesson is simple: a system prompt is a suggestion the model is free to ignore under pressure. A hook is a command the harness runs whether the model likes it or not. If a step must always happen, it cannot live in prose — it has to live in configuration.
+The lesson is simple: a system prompt is a suggestion the model is free to ignore under pressure. If a step must always happen, it cannot live in prose — it has to live in configuration that something *other than the model* controls.
 
-!!! note "Applies to every harness"
-    Claude Code, Cursor, Codex CLI, Aider and others all expose some form of event hook or pre/post command. The names differ but the principle is identical: the harness enforces, the model requests.
+## Three ways to guarantee a step happens
+
+There isn't one mechanism — there are three, with different trade-offs:
+
+| Option | Determinism | Feedback latency | Where it fits |
+|---|---|---|---|
+| **Harness hooks** | High — the harness runs them, not the model | Immediate (same turn) | When your tool supports them (Claude Code, Codex CLI, partial in Aider) |
+| **Specialized agent** | Medium-high — a unit task the model almost always executes correctly | Same turn or next turn | When hooks aren't available, or when validation needs judgment, not just a command |
+| **External workflows** (CI, Actions, pre-commit) | Highest — lives outside the agent entirely | Late (PR / push time) | As a safety net, or when the agent isn't in the loop (e.g. Copilot coding agent) |
+
+Each one closes a different loop:
+
+- **Hooks** close the **inner loop**: failure becomes context the agent reads on its next step, mid-turn, with no human involvement.
+- **Specialized agents** also close the inner loop, but a turn later — the orchestrator delegates "run the validator" to a focused subagent and reads its output.
+- **External workflows** close the **outer loop**: the human (or an upstream orchestrator) sees the failure during review, and the next iteration starts from there.
+
+You don't pick one. You **layer** them: hooks for what the harness supports, specialized agents for what hooks can't express, CI as the final net.
+
+### Tool support today
+
+| Tool | Event hooks | Specialized sub-agents | External workflow integration |
+|---|---|---|---|
+| Claude Code | Yes (`PreToolUse`, `PostToolUse`, `Stop`, `SessionStart`...) | Yes | Yes (any CI) |
+| Codex CLI | Yes, equivalent | Yes | Yes |
+| Cursor | Partial (commands, no general event hooks) | Limited | Yes |
+| Aider | Limited (`--lint-cmd`, `--test-cmd` at end-of-turn) | No | Yes |
+| GitHub Copilot | **No** event hooks | No (Copilot coding agent runs as a single agent) | Yes — relies on git hooks + GitHub Actions |
+
+If your tool doesn't expose hooks, the determinism still has to live somewhere — push it into specialized agents and external workflows.
+
+!!! note "The principle is the same across tools"
+    The harness enforces, the model requests. Whether "the harness" is a hook, a delegated subagent, or a CI job is an implementation detail.
+
+## Why hooks (when you have them) are the strongest option
 
 ## Hook events you'll actually use
 
@@ -137,9 +172,19 @@ When a hook fails, resist the urge to skip it. Instead:
 !!! tip "Log, don't guess"
     Pipe hook output to a logfile (`>> /tmp/agent-hooks.log 2>&1`) during setup. You'll debug in minutes instead of hours.
 
+## Layering the three options in practice
+
+A realistic setup for a TypeScript service might look like:
+
+- **Hooks** — Prettier on every edit; ESLint + `tsc` on `Stop`; `gitleaks` on pre-commit. These cover the things that should never be in doubt and can be expressed as a single command.
+- **Specialized agent** — a `migration-validator` subagent the orchestrator calls before any database change. It runs the migration in a throwaway DB, checks for destructive operations, and returns a structured report. A hook can't express that judgment; a focused subagent almost always can.
+- **External workflows** — GitHub Actions on PR: full test suite, Trivy security scan, performance smoke tests. Catches what slipped through, and is what the human reviews against in the outer loop.
+
+Each layer feeds the next loop. Hooks self-correct the agent in seconds. Specialized agents catch what hooks can't, in the same session. CI catches what the agent missed and surfaces it to the human, who either fixes it or asks the agent to.
+
 ## The bridge to harness engineering
 
-Hooks are where "using an agent" becomes "engineering a harness." Once you have a formatter, a linter, a secret scanner, and a test runner wired in, you stop worrying about whether the agent remembered the rules — because the rules aren't the agent's job anymore. That shift of responsibility, from prompt to plumbing, is the single biggest maturity jump a team makes.
+This is where "using an agent" becomes "engineering a harness." Once you have hooks, specialized agents, and CI wired together — and they all feed signal back into the loop they belong to — you stop worrying about whether the agent remembered the rules. The rules aren't the agent's job anymore. That shift of responsibility, from prompt to plumbing, is the single biggest maturity jump a team makes.
 
 !!! success "Key takeaway"
-    Hooks have two jobs: **automate** (do the thing the agent shouldn't be trusted to remember) and **sense** (feed failures back so the agent self-corrects). If it must always happen, it must be a hook — and if you want the agent to react, the hook must speak to it through its exit code.
+    Determinism doesn't come from one mechanism. **Hooks** cover what the harness can express. **Specialized agents** cover what hooks can't. **External workflows** are the net underneath both. Each one feeds either the agent's inner loop or the human's outer loop — and a step that doesn't feed *some* loop isn't a guarantee, it's decoration.

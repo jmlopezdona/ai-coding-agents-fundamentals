@@ -1,23 +1,58 @@
-# 7. Hooks y automatización
+# 7. Garantías deterministas: hooks, agentes especializados y workflows externos
 
-Los hooks son comandos que el harness ejecuta automáticamente ante eventos (antes de una tool call, después de una edición, antes de un commit). Son cómo impones cosas en las que no deberías confiar a la memoria del agente — formato, lint, escaneo de secretos, ejecución de tests.
+Hay pasos que tienen que pasar — formato, lint, type checks, escaneo de secretos, tests — y "le pedí al agente que se acordara" no es una estrategia. Este capítulo va sobre los mecanismos que hacen que esos pasos sean fiables: **hooks** cuando el harness los ofrece, **agentes especializados** cuando no (o cuando hace falta juicio), y **workflows externos** (CI, GitHub Actions, git hooks) como red de seguridad. En la práctica los combinas en capas.
+
+Esos mismos mecanismos también devuelven los fallos a quien esté iterando: el propio agente en el **inner loop** (para que se autocorrija sin esperar a un humano), y el humano o un agente upstream en el **outer loop** (para que la colaboración se base en señal real, no en confianza).
 
 ## Qué vas a aprender
 
-- La diferencia entre "pedir al agente que haga X" y "hacer que el harness imponga X."
-- Hooks habituales que merece la pena montar el primer día.
-- Por qué los hooks baten a las instrucciones para cualquier cosa crítica de seguridad.
-- Cuándo ejecutar cosas por edición y cuándo al cerrar el turno.
-- Cómo los hooks actúan como sensores que devuelven los fallos al contexto del agente.
+- La diferencia entre "pedir al agente que haga X" y "hacer que algo distinto del agente lo imponga".
+- Tres mecanismos para garantías deterministas, y cuándo encaja cada uno.
+- Cómo esos mecanismos devuelven feedback al inner loop (autocorrección del agente) y al outer loop (revisión humano/agente).
+- Qué herramientas soportan qué mecanismo hoy.
+- Hooks habituales que merece la pena montar el primer día y cómo depurarlos.
+- Por qué los hooks actúan como **sensores**, no solo como automatizadores.
 
-## Las instrucciones son esperanzas, los hooks son garantías
+## Las instrucciones son esperanzas, las garantías son configuración
 
 Todo equipo que adopta un agente de código pasa por el mismo ciclo. Alguien escribe en `AGENTS.md` o `CLAUDE.md`: "Ejecuta siempre `pnpm lint` después de editar TypeScript." Durante un tiempo funciona. Luego cambia el modelo, el contexto se alarga, la tarea urge, y la instrucción deja silenciosamente de cumplirse. El agente publica código que rompe CI.
 
-La lección es simple: un system prompt es una sugerencia que el modelo puede ignorar bajo presión. Un hook es un comando que el harness ejecuta le guste o no al modelo. Si un paso tiene que pasar siempre, no puede vivir en prosa — tiene que vivir en configuración.
+La lección es simple: un system prompt es una sugerencia que el modelo puede ignorar bajo presión. Si un paso tiene que pasar siempre, no puede vivir en prosa — tiene que vivir en configuración que controle algo *distinto del modelo*.
 
-!!! note "Aplica a cualquier harness"
-    Claude Code, Cursor, Codex CLI, Aider y otros exponen alguna forma de hook de eventos o comando pre/post. Los nombres cambian pero el principio es idéntico: el harness impone, el modelo pide.
+## Tres formas de garantizar que un paso ocurra
+
+No hay un único mecanismo — hay tres, con trade-offs distintos:
+
+| Opción | Determinismo | Latencia del feedback | Dónde encaja |
+|---|---|---|---|
+| **Hooks del harness** | Alto — los ejecuta el harness, no el modelo | Inmediato (mismo turno) | Si tu herramienta los soporta (Claude Code, Codex CLI, parcial en Aider) |
+| **Agente especializado** | Medio-alto — tarea unitaria que el modelo casi siempre ejecuta bien | Mismo turno o turno siguiente | Si no tienes hooks, o si la validación necesita juicio, no solo un comando |
+| **Workflows externos** (CI, Actions, pre-commit) | Máximo — vive completamente fuera del agente | Tardío (al PR / al push) | Como red de seguridad, o cuando el agente no está en el bucle (p. ej. Copilot coding agent) |
+
+Cada uno cierra un bucle distinto:
+
+- **Hooks** cierran el **inner loop**: el fallo se convierte en contexto que el agente lee en su siguiente paso, a mitad de turno, sin intervención humana.
+- **Agentes especializados** también cierran el inner loop, pero un turno más tarde — el orquestador delega "ejecuta el validador" a un subagente focal y lee su salida.
+- **Workflows externos** cierran el **outer loop**: el humano (o un orquestador upstream) ve el fallo durante la revisión, y la siguiente iteración arranca desde ahí.
+
+No eliges uno. Los **apilas**: hooks para lo que el harness soporte, agentes especializados para lo que los hooks no expresen, CI como red final.
+
+### Soporte de las herramientas hoy
+
+| Herramienta | Hooks de evento | Sub-agentes especializados | Integración con workflows externos |
+|---|---|---|---|
+| Claude Code | Sí (`PreToolUse`, `PostToolUse`, `Stop`, `SessionStart`...) | Sí | Sí (cualquier CI) |
+| Codex CLI | Sí, equivalente | Sí | Sí |
+| Cursor | Parcial (commands, sin hooks de evento generales) | Limitado | Sí |
+| Aider | Limitado (`--lint-cmd`, `--test-cmd` al cerrar turno) | No | Sí |
+| GitHub Copilot | **No** tiene hooks de evento | No (Copilot coding agent corre como un único agente) | Sí — se apoya en git hooks + GitHub Actions |
+
+Si tu herramienta no expone hooks, el determinismo sigue teniendo que vivir en algún sitio — empújalo a agentes especializados y workflows externos.
+
+!!! note "El principio es el mismo en todas las herramientas"
+    El harness impone, el modelo pide. Que "el harness" sea un hook, un subagente delegado o un job de CI es un detalle de implementación.
+
+## Por qué los hooks (cuando los tienes) son la opción más fuerte
 
 ## Eventos de hook que usarás de verdad
 
@@ -137,9 +172,19 @@ Cuando un hook falla, resiste la tentación de saltártelo. En su lugar:
 !!! tip "Loggea, no adivines"
     Redirige la salida del hook a un fichero (`>> /tmp/agent-hooks.log 2>&1`) durante la puesta a punto. Depurarás en minutos en vez de en horas.
 
+## Apilar las tres opciones en la práctica
+
+Un setup realista para un servicio TypeScript podría verse así:
+
+- **Hooks** — Prettier en cada edición; ESLint + `tsc` en `Stop`; `gitleaks` en pre-commit. Cubren las cosas que nunca deberían estar en duda y que se expresan como un único comando.
+- **Agente especializado** — un subagente `migration-validator` al que el orquestador llama antes de cualquier cambio en base de datos. Ejecuta la migración en una BD desechable, comprueba operaciones destructivas y devuelve un informe estructurado. Un hook no puede expresar ese juicio; un subagente focal casi siempre sí.
+- **Workflows externos** — GitHub Actions sobre el PR: suite de tests completa, escaneo de seguridad con Trivy, smoke tests de rendimiento. Caza lo que se haya escapado, y es contra lo que el humano revisa en el outer loop.
+
+Cada capa alimenta el siguiente bucle. Los hooks autocorrigen al agente en segundos. Los agentes especializados cazan lo que los hooks no pueden, en la misma sesión. CI caza lo que el agente se perdió y lo expone al humano, que lo arregla o le pide al agente que lo arregle.
+
 ## El puente con el harness engineering
 
-Los hooks son donde "usar un agente" se convierte en "hacer ingeniería de un harness." Una vez tienes formateador, linter, escáner de secretos y runner de tests conectados, dejas de preocuparte de si el agente se acordó de las reglas — porque las reglas ya no son trabajo del agente. Ese traspaso de responsabilidad, del prompt a la fontanería, es el mayor salto de madurez que hace un equipo.
+Aquí es donde "usar un agente" se convierte en "hacer ingeniería de un harness." Una vez tienes hooks, agentes especializados y CI conectados — y los tres devuelven señal al bucle al que pertenecen — dejas de preocuparte de si el agente se acordó de las reglas. Las reglas ya no son trabajo del agente. Ese traspaso de responsabilidad, del prompt a la fontanería, es el mayor salto de madurez que hace un equipo.
 
 !!! success "Idea clave"
-    Los hooks tienen dos trabajos: **automatizar** (hacer aquello que no puedes confiar a la memoria del agente) y **sensar** (devolver los fallos para que el agente se autocorrija). Si tiene que pasar siempre, tiene que ser un hook — y si quieres que el agente reaccione, el hook tiene que hablarle a través de su código de salida.
+    El determinismo no viene de un único mecanismo. **Los hooks** cubren lo que el harness puede expresar. **Los agentes especializados** cubren lo que los hooks no pueden. **Los workflows externos** son la red debajo de los dos. Cada uno alimenta el inner loop del agente o el outer loop del humano — y un paso que no alimenta *algún* bucle no es una garantía, es decoración.
