@@ -64,7 +64,7 @@ No hay ningún documento al que puedas apuntar a alguien nuevo. El conocimiento 
 
 Te das cuenta de que empiezas cada sesión con un preámbulo de 20 líneas: "Recuerda ejecutar los tests, recuerda las reglas de migración, recuerda no tocar X, recuerda Y, recuerda Z..." Estás haciendo a mano lo que un harness debería hacer automáticamente.
 
-**Qué falta:** guías que se cargan bajo demanda, hooks que fuerzan reglas y contexto inyectado por el harness en lugar de por ti.
+**Qué falta:** guías que se cargan bajo demanda, hooks que fuerzan reglas y contexto inyectado por el harness en lugar de por ti. Y, casi siempre detrás de esto, una spec ausente: estás reinyectando en cada sesión lo que debería vivir escrito en algún sitio — ese es el territorio de SDD.
 
 ### Tienes miedo de dejar al agente corriendo solo
 
@@ -80,7 +80,7 @@ Cuando el mismo agente ayuda en diseño, código, QA y operaciones, necesitas me
 
 ## Por qué el prompt-engineering no arregla nada de esto
 
-Todos estos síntomas comparten una causa raíz: **el problema no es lo que se le dice al modelo, es la ausencia de un sistema alrededor del modelo.** Un prompt más largo no puede reemplazar a un hook. Un fichero de memoria mejor no puede reemplazar a un sandbox. Una instrucción ingeniosa no puede reemplazar a un sensor automatizado. En cuanto estás intentando usar palabras para tapar huecos estructurales, estás peleando la batalla equivocada.
+Todos estos síntomas comparten una causa raíz: **el problema no es lo que se le dice al modelo, es la ausencia de un sistema alrededor del modelo.** Un prompt más largo no puede reemplazar a un hook. Un fichero de memoria mejor no puede reemplazar a un sandbox. Una instrucción ingeniosa no puede reemplazar a un sensor automatizado. Y una spec más detallada, por sí sola, tampoco arregla nada si no hay un sistema que la mantenga viva mientras el código evoluciona. En cuanto estás intentando usar palabras para tapar huecos estructurales, estás peleando la batalla equivocada.
 
 ## Qué sigue
 

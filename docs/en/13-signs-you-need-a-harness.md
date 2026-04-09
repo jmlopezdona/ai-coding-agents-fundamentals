@@ -64,7 +64,7 @@ There is no document you can point a new hire to. The knowledge lives in heads a
 
 You notice you've started every session with a 20-line preamble: "Remember to run the tests, remember the migration rules, remember not to touch X, remember Y, remember Z..." You are doing by hand what a harness should do automatically.
 
-**What's missing:** guides loaded on demand, hooks that enforce rules, and context injected by the harness instead of by you.
+**What's missing:** guides loaded on demand, hooks that enforce rules, and context injected by the harness instead of by you. And, almost always lurking behind this, a missing spec: you're re-injecting every session what should live written down somewhere — that's SDD territory.
 
 ### You're afraid to let the agent run unattended
 
@@ -80,7 +80,7 @@ When the same agent helps with design, code, QA, and ops, you need shared memory
 
 ## Why prompt-engineering won't fix any of this
 
-All of these symptoms share a root cause: **the problem is not what the model is told, it's the absence of a system around the model.** A longer prompt cannot replace a hook. A better memory file cannot replace a sandbox. A clever instruction cannot replace an automated sensor. Once you're trying to use words to fix structural gaps, you are fighting the wrong battle.
+All of these symptoms share a root cause: **the problem is not what the model is told, it's the absence of a system around the model.** A longer prompt cannot replace a hook. A better memory file cannot replace a sandbox. A clever instruction cannot replace an automated sensor. And a more detailed spec, on its own, doesn't fix anything either if nothing keeps it alive as the code evolves. Once you're trying to use words to fix structural gaps, you are fighting the wrong battle.
 
 ## What's next
 
