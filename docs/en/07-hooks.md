@@ -7,6 +7,8 @@ Hooks are commands the harness runs automatically on events (before a tool call,
 - The difference between "asking the agent to do X" and "making the harness enforce X."
 - Common hooks worth setting up on day one.
 - Why hooks beat instructions for anything safety-critical.
+- When to run things per-edit versus at end-of-turn.
+- How hooks act as sensors that feed failures back into the agent's context.
 
 ## Instructions are hopes, hooks are guarantees
 
@@ -32,7 +34,7 @@ Most harnesses expose a similar event surface. The useful ones are:
 Before you tune prompts, set up these four. They pay for themselves within a day:
 
 1. **Formatter on edit.** Prettier, Black, gofmt, rustfmt. Removes a whole class of pointless diffs.
-2. **Linter on edit.** ESLint, Ruff, golangci-lint. Catches the agent's favorite mistakes (unused imports, shadowed variables).
+2. **Linter / typechecker at end-of-turn.** ESLint, Ruff, golangci-lint, tsc, mypy. Catches the agent's favorite mistakes (unused imports, shadowed variables, broken types) — but run them once when the turn closes, not on every edit (see "Per-edit vs end-of-turn" below).
 3. **Secret scanner pre-commit.** gitleaks or trufflehog. The agent will eventually paste an API key somewhere.
 4. **Affected tests.** Run the tests that touch changed files. Fast feedback, not full CI.
 
@@ -50,10 +52,16 @@ Here's a Claude Code-style hooks configuration. Cursor and Codex use different s
           {
             "type": "command",
             "command": "npx prettier --write \"$CLAUDE_FILE_PATHS\""
-          },
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
           {
             "type": "command",
-            "command": "npx eslint --fix \"$CLAUDE_FILE_PATHS\""
+            "command": "npx eslint . && npx tsc --noEmit"
           }
         ]
       }
@@ -73,7 +81,37 @@ Here's a Claude Code-style hooks configuration. Cursor and Codex use different s
 }
 ```
 
-The `PostToolUse` hook runs Prettier then ESLint on any file the agent just wrote. The `PreToolUse` hook inspects bash commands and exits non-zero to block things like `rm -rf /` or `git push --force` to `main`.
+The `PostToolUse` hook runs Prettier on any file the agent just wrote — cheap, idempotent, no failures. The `Stop` hook runs ESLint and `tsc` once when the agent finishes its turn, producing a single coherent verification pass instead of noise after every edit. The `PreToolUse` hook inspects bash commands and exits non-zero to block things like `rm -rf /` or `git push --force` to `main`.
+
+## Per-edit vs end-of-turn: when to run what
+
+Not every check belongs on every edit. The right rule of thumb:
+
+- **Per-edit (`PostToolUse`)** is for **formatters**: Prettier, Black, gofmt, rustfmt, ruff format. They're cheap, idempotent, can't really "fail", and they keep the agent from ever seeing badly-formatted code. Running them on every write is the correct default.
+- **End-of-turn (`Stop` / `SubagentStop`)** is for **linters, typecheckers, and tests**: ESLint, mypy, tsc, pytest. They're expensive, noisy, and frequently fail mid-refactor — a symbol may be temporarily missing, an import temporarily broken. Running them once at the end of the turn over everything that changed is faster and produces a single, coherent feedback signal.
+
+The useful rule: **format per-edit, validate at end-of-turn.**
+
+!!! warning "Heavy validation per-edit hurts more than it helps"
+    Running `tsc` after every `Edit` wastes tokens, slows the loop, and floods the agent with transient errors from work-in-progress code. The agent then "fixes" things that weren't broken — they were just half-done. Wait until the turn closes.
+
+## Hooks as sensors: how the agent learns about failures
+
+A hook that runs is only half the story. The other half is: **does the agent find out it ran, and what it found?**
+
+The answer lives in the hook's exit code:
+
+- **Exit 0** — silent. The agent continues as if nothing happened.
+- **Non-zero exit (or stderr)** — the harness typically injects the hook's stderr back into the agent's context as a system message. The agent sees it as if it were tool feedback, opens the file, reads the error, fixes it, and retries. The verification loop closes without human intervention.
+- **`PreToolUse` hooks can be blocking**: a non-zero exit aborts the action *before* it happens. This is how guardrails like "don't `rm -rf` outside the workspace" actually work.
+
+This is the bridge to chapter 1's "verification before handing back". A well-designed hook isn't just an automator — it's a **sensor** that turns side-effects into feedback the agent can act on. The end-of-turn `tsc` failure becomes the next turn's first task. The agent self-corrects.
+
+!!! warning "The anti-pattern: hooks that only log"
+    A hook that pipes output to `/tmp/agent-hooks.log` and exits 0 is decoration. Nothing flows back into the agent's context, so failures are invisible until a human reads the log. If you want the agent to react, the failure must be visible to it.
+
+!!! tip "A hook isn't valuable because it ran"
+    It's valuable because the agent noticed it ran and acted on the result. Wire the exit code with intention.
 
 ## Blocking vs warning
 
@@ -104,4 +142,4 @@ When a hook fails, resist the urge to skip it. Instead:
 Hooks are where "using an agent" becomes "engineering a harness." Once you have a formatter, a linter, a secret scanner, and a test runner wired in, you stop worrying about whether the agent remembered the rules — because the rules aren't the agent's job anymore. That shift of responsibility, from prompt to plumbing, is the single biggest maturity jump a team makes.
 
 !!! success "Key takeaway"
-    If it must always happen, it must be a hook. Instructions are hopes; hooks are guarantees.
+    Hooks have two jobs: **automate** (do the thing the agent shouldn't be trusted to remember) and **sense** (feed failures back so the agent self-corrects). If it must always happen, it must be a hook — and if you want the agent to react, the hook must speak to it through its exit code.

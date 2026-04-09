@@ -7,6 +7,8 @@ Los hooks son comandos que el harness ejecuta automáticamente ante eventos (ant
 - La diferencia entre "pedir al agente que haga X" y "hacer que el harness imponga X."
 - Hooks habituales que merece la pena montar el primer día.
 - Por qué los hooks baten a las instrucciones para cualquier cosa crítica de seguridad.
+- Cuándo ejecutar cosas por edición y cuándo al cerrar el turno.
+- Cómo los hooks actúan como sensores que devuelven los fallos al contexto del agente.
 
 ## Las instrucciones son esperanzas, los hooks son garantías
 
@@ -32,7 +34,7 @@ La mayoría de harnesses expone una superficie de eventos similar. Los útiles s
 Antes de afinar prompts, monta estos cuatro. Se amortizan en un día:
 
 1. **Formateador en edición.** Prettier, Black, gofmt, rustfmt. Elimina toda una clase de diffs inútiles.
-2. **Linter en edición.** ESLint, Ruff, golangci-lint. Caza los errores favoritos del agente (imports sin usar, variables sombreadas).
+2. **Linter / typechecker al cerrar el turno.** ESLint, Ruff, golangci-lint, tsc, mypy. Caza los errores favoritos del agente (imports sin usar, variables sombreadas, tipos rotos) — pero ejecútalos una vez al cerrar el turno, no en cada edición (ver "Por edición vs al cerrar turno" más abajo).
 3. **Escáner de secretos pre-commit.** gitleaks o trufflehog. El agente acabará pegando una API key en algún sitio.
 4. **Tests afectados.** Ejecuta los tests que tocan los ficheros cambiados. Feedback rápido, no CI completa.
 
@@ -50,10 +52,16 @@ Aquí tienes una configuración de hooks al estilo Claude Code. Cursor y Codex u
           {
             "type": "command",
             "command": "npx prettier --write \"$CLAUDE_FILE_PATHS\""
-          },
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
           {
             "type": "command",
-            "command": "npx eslint --fix \"$CLAUDE_FILE_PATHS\""
+            "command": "npx eslint . && npx tsc --noEmit"
           }
         ]
       }
@@ -73,7 +81,37 @@ Aquí tienes una configuración de hooks al estilo Claude Code. Cursor y Codex u
 }
 ```
 
-El hook `PostToolUse` ejecuta Prettier y luego ESLint sobre cualquier fichero que el agente acabe de escribir. El hook `PreToolUse` inspecciona comandos bash y sale con código distinto de cero para bloquear cosas como `rm -rf /` o `git push --force` a `main`.
+El hook `PostToolUse` ejecuta Prettier sobre cualquier fichero que el agente acabe de escribir — barato, idempotente, sin fallos. El hook `Stop` ejecuta ESLint y `tsc` una sola vez cuando el agente termina su turno, produciendo una pasada de verificación coherente en lugar de ruido tras cada edición. El hook `PreToolUse` inspecciona comandos bash y sale con código distinto de cero para bloquear cosas como `rm -rf /` o `git push --force` a `main`.
+
+## Por edición vs al cerrar turno: cuándo ejecutar cada cosa
+
+No toda comprobación pertenece a cada edición. La regla útil:
+
+- **Por edición (`PostToolUse`)** es para **formateadores**: Prettier, Black, gofmt, rustfmt, ruff format. Son baratos, idempotentes, no pueden "fallar" de verdad y evitan que el agente vea jamás código mal formateado. Ejecutarlos en cada escritura es el default correcto.
+- **Al cerrar turno (`Stop` / `SubagentStop`)** es para **linters, typecheckers y tests**: ESLint, mypy, tsc, pytest. Son caros, ruidosos y fallan a menudo a mitad de un refactor — un símbolo puede estar momentáneamente ausente, un import temporalmente roto. Ejecutarlos una sola vez al cerrar el turno sobre todo lo que cambió es más rápido y produce una señal de feedback única y coherente.
+
+La regla útil: **formatea por edición, valida al cerrar el turno.**
+
+!!! warning "La validación pesada por edición hace más daño que bien"
+    Ejecutar `tsc` después de cada `Edit` desperdicia tokens, ralentiza el bucle e inunda al agente con errores transitorios de código en construcción. El agente entonces "arregla" cosas que no estaban rotas — solo estaban a medio hacer. Espera a que cierre el turno.
+
+## Los hooks como sensores: cómo se entera el agente de los fallos
+
+Que un hook se ejecute es solo la mitad de la historia. La otra mitad es: **¿se entera el agente de que se ejecutó, y de lo que encontró?**
+
+La respuesta vive en el código de salida del hook:
+
+- **Exit 0** — silencio. El agente continúa como si nada.
+- **Exit distinto de cero (o stderr)** — el harness típicamente inyecta el stderr del hook de vuelta al contexto del agente como un mensaje del sistema. El agente lo ve como si fuera feedback de una herramienta, abre el fichero, lee el error, lo arregla y reintenta. El bucle de verificación se cierra sin intervención humana.
+- **Los hooks `PreToolUse` pueden ser bloqueantes**: un exit no-cero aborta la acción *antes* de que ocurra. Así es como funcionan de verdad guardarraíles tipo "no hagas `rm -rf` fuera del workspace".
+
+Este es el puente con la "verificación antes de devolver el control" del capítulo 1. Un hook bien diseñado no es solo un automatizador — es un **sensor** que convierte efectos colaterales en feedback sobre el que el agente puede actuar. El fallo de `tsc` al cerrar el turno se convierte en la primera tarea del siguiente turno. El agente se autocorrige.
+
+!!! warning "El anti-patrón: hooks que solo loguean"
+    Un hook que redirige su salida a `/tmp/agent-hooks.log` y sale con 0 es decoración. Nada vuelve al contexto del agente, así que los fallos son invisibles hasta que un humano lee el log. Si quieres que el agente reaccione, el fallo tiene que ser visible para él.
+
+!!! tip "Un hook no vale por haberse ejecutado"
+    Vale porque el agente se enteró de que se ejecutó y actuó sobre el resultado. Cablea el código de salida con intención.
 
 ## Bloquear vs avisar
 
@@ -104,4 +142,4 @@ Cuando un hook falla, resiste la tentación de saltártelo. En su lugar:
 Los hooks son donde "usar un agente" se convierte en "hacer ingeniería de un harness." Una vez tienes formateador, linter, escáner de secretos y runner de tests conectados, dejas de preocuparte de si el agente se acordó de las reglas — porque las reglas ya no son trabajo del agente. Ese traspaso de responsabilidad, del prompt a la fontanería, es el mayor salto de madurez que hace un equipo.
 
 !!! success "Idea clave"
-    Si tiene que pasar siempre, tiene que ser un hook. Las instrucciones son esperanzas; los hooks son garantías.
+    Los hooks tienen dos trabajos: **automatizar** (hacer aquello que no puedes confiar a la memoria del agente) y **sensar** (devolver los fallos para que el agente se autocorrija). Si tiene que pasar siempre, tiene que ser un hook — y si quieres que el agente reaccione, el hook tiene que hablarle a través de su código de salida.
